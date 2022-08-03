@@ -1,12 +1,16 @@
+using NasFileIndexer.Common.Providers;
+using Rn.NetCore.Common.Logging;
+
 namespace NasFileIndexer
 {
   public class Worker : BackgroundService
   {
-    private readonly ILogger<Worker> _logger;
+    private readonly ILoggerAdapter<Worker> _logger;
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(ILoggerAdapter<Worker> logger, IConfigProvider configProvider)
     {
       _logger = logger;
+      var config = configProvider.GetConfig();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
