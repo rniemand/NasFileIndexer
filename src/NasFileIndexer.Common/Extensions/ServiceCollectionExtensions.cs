@@ -2,7 +2,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NasFileIndexer.Common.Providers;
+using NasFileIndexer.Common.Services;
 using NLog.Extensions.Logging;
+using Rn.NetCore.Common.Abstractions;
+using Rn.NetCore.Common.Factories;
 using Rn.NetCore.Common.Logging;
 using Rn.NetCore.DbCommon;
 
@@ -16,11 +19,19 @@ public static class ServiceCollectionExtensions
       // Configuration
       .AddSingleton(config)
 
+      // Abstractions
+      .AddSingleton<IFileAbstraction, FileAbstraction>()
+      .AddSingleton<IDateTimeAbstraction, DateTimeAbstraction>()
+      .AddSingleton<IIOFactory, IOFactory>()
+
       // DB Stuff
       .AddRnDbMySql(config)
 
       // Providers
       .AddSingleton<IConfigProvider, ConfigProvider>()
+
+      // Services
+      .AddSingleton<IFileScannerService, FileScannerService>()
 
       // Logging
       .AddLogging(loggingBuilder =>

@@ -1,23 +1,23 @@
 using NasFileIndexer.Common.Providers;
+using NasFileIndexer.Common.Services;
 using Rn.NetCore.Common.Logging;
 
 namespace NasFileIndexer
 {
   public class Worker : BackgroundService
   {
-    private readonly ILoggerAdapter<Worker> _logger;
+    private readonly IFileScannerService _fileScannerService;
 
-    public Worker(ILoggerAdapter<Worker> logger, IConfigProvider configProvider)
+    public Worker(IFileScannerService fileScannerService)
     {
-      _logger = logger;
-      var config = configProvider.GetConfig();
+      _fileScannerService = fileScannerService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
       while (!stoppingToken.IsCancellationRequested)
       {
-        _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+        await _fileScannerService.TickAsync(stoppingToken);
         await Task.Delay(1000, stoppingToken);
       }
     }
