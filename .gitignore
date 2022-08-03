@@ -30,3 +30,6 @@ Obj/
 
 # SonarQube related files
 \.github/\.sonarqube/
+
+# NCrunch
+*.ncrunchsolution

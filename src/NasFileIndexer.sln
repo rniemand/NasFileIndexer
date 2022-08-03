@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NasFileIndexer.Common", "Na
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{9A5181CE-082F-4311-84C8-AA1A1181EC21}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{47D7F06D-F4C1-455C-84A1-B3DFA2FF9A6A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NasFileIndexer.Tests", "..\tests\NasFileIndexer.Tests\NasFileIndexer.Tests.csproj", "{D196BE0C-1851-4213-BDCC-B3C2C7FE494C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,12 +27,17 @@ Global
 		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D196BE0C-1851-4213-BDCC-B3C2C7FE494C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D196BE0C-1851-4213-BDCC-B3C2C7FE494C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D196BE0C-1851-4213-BDCC-B3C2C7FE494C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D196BE0C-1851-4213-BDCC-B3C2C7FE494C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B} = {9A5181CE-082F-4311-84C8-AA1A1181EC21}
+		{D196BE0C-1851-4213-BDCC-B3C2C7FE494C} = {47D7F06D-F4C1-455C-84A1-B3DFA2FF9A6A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54508B19-3C46-431E-B257-DEFB8E637752}
