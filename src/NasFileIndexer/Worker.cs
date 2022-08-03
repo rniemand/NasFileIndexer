@@ -18,7 +18,7 @@ namespace NasFileIndexer
       while (!stoppingToken.IsCancellationRequested)
       {
         await _fileScannerService.TickAsync(stoppingToken);
-        await Task.Delay(1000, stoppingToken);
+        await Task.Delay(5000, stoppingToken);
       }
     }
   }

@@ -4,7 +4,6 @@ using NasFileIndexer.Common.Repo;
 using Rn.NetCore.Common.Abstractions;
 using Rn.NetCore.Common.Factories;
 using Rn.NetCore.Common.Logging;
-using Rn.NetCore.Common.Wrappers;
 
 namespace NasFileIndexer.Common.Services;
 
@@ -20,6 +19,7 @@ public class FileScannerService : IFileScannerService
   private readonly IIOFactory _ioFactory;
   private readonly IFileRepo _fileRepo;
   private readonly NasFileIndexerConfig _config;
+  private DateTime _nextScanTime = DateTime.MinValue;
 
   public FileScannerService(ILoggerAdapter<FileScannerService> logger,
     IDateTimeAbstraction dateTime,
@@ -31,11 +31,16 @@ public class FileScannerService : IFileScannerService
     _dateTime = dateTime;
     _ioFactory = ioFactory;
     _fileRepo = fileRepo;
+
     _config = configProvider.GetConfig();
+    _nextScanTime = _dateTime.Now.AddSeconds(1);
   }
 
   public async Task TickAsync(CancellationToken stoppingToken)
   {
+    if (_dateTime.Now < _nextScanTime)
+      return;
+
     await _fileRepo.TruncateTableAsync();
 
     foreach (var scanPath in _config.ScanPaths)
@@ -46,13 +51,7 @@ public class FileScannerService : IFileScannerService
       await SaveResultsAsync(files, stoppingToken);
     }
 
-
-
-
-
-
-    Console.WriteLine();
-    await Task.CompletedTask;
+    _nextScanTime = _dateTime.Now.AddHours(12);
   }
 
   private async Task ScanDirRecursive(List<FileEntity> files, string path, int depth, CancellationToken stoppingToken)
