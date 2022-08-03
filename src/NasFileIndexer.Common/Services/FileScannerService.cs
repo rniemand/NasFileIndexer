@@ -42,19 +42,13 @@ public class FileScannerService : IFileScannerService
       return;
 
     await _fileRepo.TruncateTableAsync();
-
     foreach (var scanPath in _config.ScanPaths)
-    {
-      var files = new List<FileEntity>();
-      await ScanDirRecursive(files, scanPath, 1, stoppingToken);
-      await EnrichEntriesAsync(files, stoppingToken);
-      await SaveResultsAsync(files, stoppingToken);
-    }
+      await ScanDirRecursive(scanPath, 1, stoppingToken);
 
     _nextScanTime = _dateTime.Now.AddHours(12);
   }
 
-  private async Task ScanDirRecursive(List<FileEntity> files, string path, int depth, CancellationToken stoppingToken)
+  private async Task ScanDirRecursive(string path, int depth, CancellationToken stoppingToken)
   {
     if (stoppingToken.IsCancellationRequested || depth > _config.MaxScanDepth)
       return;
@@ -63,8 +57,9 @@ public class FileScannerService : IFileScannerService
     var directory = _ioFactory.GetDirectoryInfo(path);
 
     foreach (var subDirInfo in directory.GetDirectories())
-      await ScanDirRecursive(files, subDirInfo.FullName, depth+1, stoppingToken);
+      await ScanDirRecursive(subDirInfo.FullName, depth+1, stoppingToken);
 
+    var files = new List<FileEntity>();
     files.AddRange(directory
       .GetFiles()
       .Select(fileInfo => new FileEntity
@@ -77,6 +72,9 @@ public class FileScannerService : IFileScannerService
         LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
         LastWriteTimeUtc = fileInfo.LastWriteTimeUtc
       }));
+
+    await EnrichEntriesAsync(files, stoppingToken);
+    await SaveResultsAsync(files, stoppingToken);
   }
 
   private async Task EnrichEntriesAsync(List<FileEntity> files, CancellationToken stoppingToken)

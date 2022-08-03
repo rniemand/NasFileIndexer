@@ -14,7 +14,7 @@
   },
   "NasFileIndexer": {
     "ScanPaths": [
-      "\\\\192.168.0.60\\Media\\Series\\Kids\\Animaniacs"
+      "\\\\192.168.0.60\\Media\\Series"
     ],
     "MaxScanDepth": 128 
   } 
