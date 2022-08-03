@@ -1,20 +1,24 @@
+using NasFileIndexer.Common.Providers;
+using NasFileIndexer.Common.Services;
+using Rn.NetCore.Common.Logging;
+
 namespace NasFileIndexer
 {
   public class Worker : BackgroundService
   {
-    private readonly ILogger<Worker> _logger;
+    private readonly IFileScannerService _fileScannerService;
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(IFileScannerService fileScannerService)
     {
-      _logger = logger;
+      _fileScannerService = fileScannerService;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
       while (!stoppingToken.IsCancellationRequested)
       {
-        _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-        await Task.Delay(1000, stoppingToken);
+        await _fileScannerService.TickAsync(stoppingToken);
+        await Task.Delay(5000, stoppingToken);
       }
     }
   }

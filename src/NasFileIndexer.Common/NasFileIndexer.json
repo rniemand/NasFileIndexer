@@ -1,0 +1,21 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug"
+    }
+  },
+  "ConnectionStrings": {
+    "NasFileIndexer": "Server=127.0.0.1;Uid=nfi;Pwd=password;Database=NasFileIndexer;Allow User Variables=true;SslMode=none"
+  },
+  "Rn.DbCommon": {
+    "enableMetrics": false,
+    "logSqlCommands": false,
+    "defaultConnection": "NasFileIndexer"
+  },
+  "NasFileIndexer": {
+    "ScanPaths": [
+      "\\\\192.168.0.60\\Media\\Series"
+    ],
+    "MaxScanDepth": 128 
+  } 
+}

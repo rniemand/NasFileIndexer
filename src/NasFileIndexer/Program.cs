@@ -1,9 +1,12 @@
 using NasFileIndexer;
+using NasFileIndexer.Common.Extensions;
 
-IHost host = Host.CreateDefaultBuilder(args)
+var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-      services.AddHostedService<Worker>();
+      services
+        .AddNasFileIndexer()
+        .AddHostedService<Worker>();
     })
     .Build();
 
