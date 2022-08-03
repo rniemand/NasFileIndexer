@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NasFileIndexer", "NasFileIndexer\NasFileIndexer.csproj", "{3EE43FB9-0971-4644-8E58-4526C67CBDAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NasFileIndexer", "NasFileIndexer\NasFileIndexer.csproj", "{3EE43FB9-0971-4644-8E58-4526C67CBDAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NasFileIndexer.Common", "NasFileIndexer.Common\NasFileIndexer.Common.csproj", "{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{9A5181CE-082F-4311-84C8-AA1A1181EC21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{3EE43FB9-0971-4644-8E58-4526C67CBDAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EE43FB9-0971-4644-8E58-4526C67CBDAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EE43FB9-0971-4644-8E58-4526C67CBDAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1A1C51AB-E7AC-4E93-8217-81DD0807E93B} = {9A5181CE-082F-4311-84C8-AA1A1181EC21}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {54508B19-3C46-431E-B257-DEFB8E637752}
