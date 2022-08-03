@@ -60,10 +60,11 @@ public class FileScannerService : IFileScannerService
     if (stoppingToken.IsCancellationRequested || depth > _config.MaxScanDepth)
       return;
 
+    _logger.LogDebug("Scanning directory depth {depth}: {path}", depth, path);
     var directory = _ioFactory.GetDirectoryInfo(path);
 
     foreach (var subDirInfo in directory.GetDirectories())
-      await ScanDirRecursive(files, subDirInfo.FullName, depth++, stoppingToken);
+      await ScanDirRecursive(files, subDirInfo.FullName, depth+1, stoppingToken);
 
     files.AddRange(directory
       .GetFiles()
@@ -81,11 +82,14 @@ public class FileScannerService : IFileScannerService
 
   private async Task EnrichEntriesAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
+    _logger.LogDebug("Enriching {count} file(s)", files.Count);
     await Task.CompletedTask;
   }
 
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
+    _logger.LogInformation("Saving {count} file(s) to the DB", files.Count);
+
     foreach (var file in files)
     {
       if (stoppingToken.IsCancellationRequested)
