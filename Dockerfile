@@ -1,13 +1,16 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["NasFileIndexer/NasFileIndexer.csproj", "NasFileIndexer/"]
+COPY ["src/NasFileIndexer.Common/NasFileIndexer.Common.csproj", "NasFileIndexer.Common/"]
+COPY ["src/NasFileIndexer/NasFileIndexer.csproj", "NasFileIndexer/"]
+
 RUN dotnet restore "NasFileIndexer/NasFileIndexer.csproj"
-COPY . .
+
+COPY "src/NasFileIndexer.Common" "NasFileIndexer.Common/"
+COPY "src/NasFileIndexer" "NasFileIndexer/"
+
 WORKDIR "/src/NasFileIndexer"
 RUN dotnet build "NasFileIndexer.csproj" -c Release -o /app/build
 
