@@ -41,10 +41,14 @@ public class FileScannerService : IFileScannerService
     if (_dateTime.Now < _nextScanTime)
       return;
 
+    _logger.LogInformation("Starting to index {count} source(s)",
+      _config.ScanPaths.Length);
+
     await _fileRepo.TruncateTableAsync();
     foreach (var scanPath in _config.ScanPaths)
       await ScanDirRecursive(scanPath, 1, stoppingToken);
 
+    _logger.LogInformation("Indexing completed");
     _nextScanTime = _dateTime.Now.AddHours(12);
   }
 
