@@ -4,6 +4,8 @@ using NasFileIndexer.Common.Repo;
 using Rn.NetCore.Common.Abstractions;
 using Rn.NetCore.Common.Factories;
 using Rn.NetCore.Common.Logging;
+using Rn.NetCore.Common.Wrappers;
+using System.IO;
 
 namespace NasFileIndexer.Common.Services;
 
@@ -64,18 +66,7 @@ public class FileScannerService : IFileScannerService
       await ScanDirRecursive(subDirInfo.FullName, depth+1, stoppingToken);
 
     var files = new List<FileEntity>();
-    files.AddRange(directory
-      .GetFiles()
-      .Select(fileInfo => new FileEntity
-      {
-        CreationTimeUtc = fileInfo.CreationTimeUtc,
-        DirectoryName = fileInfo.DirectoryName ?? string.Empty,
-        Extension = fileInfo.Extension,
-        FileName = fileInfo.Name,
-        FileSize = fileInfo.Length,
-        LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
-        LastWriteTimeUtc = fileInfo.LastWriteTimeUtc
-      }));
+    files.AddRange(directory.GetFiles().Select(MapFileEntry));
 
     await EnrichEntriesAsync(files, stoppingToken);
     await SaveResultsAsync(files, stoppingToken);
@@ -98,5 +89,58 @@ public class FileScannerService : IFileScannerService
 
       await _fileRepo.AddAsync(file);
     }
+  }
+
+  private static string[] ExtractPathParts(string filePath)
+  {
+    var baseDir = (Path.GetDirectoryName(filePath) ?? "")
+      .Replace("\\", "/")
+      .Replace("//", "/");
+
+    var pathParts = new List<string>();
+
+    while (baseDir.Contains("/") || baseDir.Contains("\\"))
+    {
+      var currentDir = Path.GetFileName(baseDir);
+
+      if (!string.IsNullOrEmpty(currentDir))
+        pathParts.Add(currentDir);
+
+      baseDir = Path.GetDirectoryName(baseDir) ?? string.Empty;
+    }
+
+    pathParts.Reverse();
+    return pathParts.ToArray();
+  }
+
+  private static FileEntity MapFileEntry(IFileInfo fileInfo)
+  {
+    var pathParts = ExtractPathParts(fileInfo.FullName);
+    
+    return new FileEntity
+    {
+      CreationTimeUtc = fileInfo.CreationTimeUtc,
+      DirectoryName = fileInfo.DirectoryName ?? string.Empty,
+      Extension = fileInfo.Extension,
+      FileName = fileInfo.Name,
+      FileSize = fileInfo.Length,
+      LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
+      LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
+      PathSegment01 = pathParts.Length >= 1 ? pathParts[0] : null,
+      PathSegment02 = pathParts.Length >= 2 ? pathParts[1] : null,
+      PathSegment03 = pathParts.Length >= 3 ? pathParts[2] : null,
+      PathSegment04 = pathParts.Length >= 4 ? pathParts[3] : null,
+      PathSegment05 = pathParts.Length >= 5 ? pathParts[4] : null,
+      PathSegment06 = pathParts.Length >= 6 ? pathParts[5] : null,
+      PathSegment07 = pathParts.Length >= 7 ? pathParts[6] : null,
+      PathSegment08 = pathParts.Length >= 8 ? pathParts[7] : null,
+      PathSegment09 = pathParts.Length >= 9 ? pathParts[8] : null,
+      PathSegment10 = pathParts.Length >= 10 ? pathParts[9] : null,
+      PathSegment11 = pathParts.Length >= 11 ? pathParts[10] : null,
+      PathSegment12 = pathParts.Length >= 12 ? pathParts[11] : null,
+      PathSegment13 = pathParts.Length >= 13 ? pathParts[12] : null,
+      PathSegment14 = pathParts.Length >= 14 ? pathParts[13] : null,
+      PathSegment15 = pathParts.Length >= 15 ? pathParts[14] : null
+    };
   }
 }
