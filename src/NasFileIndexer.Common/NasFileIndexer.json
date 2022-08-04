@@ -14,8 +14,8 @@
   },
   "NasFileIndexer": {
     "ScanPaths": [
-      "\\\\192.168.0.60\\Media\\Series"
+      "\\\\192.168.0.60\\Media"
     ],
-    "MaxScanDepth": 128 
+    "MaxScanDepth": 15 
   } 
 }
