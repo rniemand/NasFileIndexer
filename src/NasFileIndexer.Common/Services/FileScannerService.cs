@@ -63,7 +63,7 @@ public class FileScannerService : IFileScannerService
     if (!CanScanDirectory(path, depth, stoppingToken))
       return;
 
-    _logger.LogDebug("Scanning directory depth {depth}: {path}", depth, path);
+    _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
     var directory = _ioFactory.GetDirectoryInfo(path);
 
     foreach (var subDirInfo in directory.GetDirectories())
@@ -77,7 +77,7 @@ public class FileScannerService : IFileScannerService
 
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
-    _logger.LogInformation("Saving {count} file(s) to the DB", files.Count);
+    _logger.LogDebug("Saving {count} file(s) to the DB", files.Count);
 
     foreach (var file in files)
     {
