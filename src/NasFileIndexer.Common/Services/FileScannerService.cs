@@ -46,33 +46,40 @@ public class FileScannerService : IFileScannerService
     _logger.LogInformation("Starting to index {count} source(s)",
       _config.ScanPaths.Length);
 
+    // Ensure that we start with a clean "Files" DB table
     await _fileRepo.TruncateTableAsync();
-    foreach (var scanPath in _config.ScanPaths)
-      await ScanDirRecursive(scanPath, 1, stoppingToken);
+
+    // Spawn a scanning task per configured path to speed things up
+    var scanningTasks = _config.ScanPaths
+      .Select(scanPath => ScanDirRecursive(scanPath, 1, stoppingToken))
+      .ToArray();
+
+    // Wait for all scanning tasks to complete before wrapping up
+    await Task.WhenAll(scanningTasks);
 
     _logger.LogInformation("Indexing completed");
-    _nextScanTime = _dateTime.Now.AddHours(12);
+    _nextScanTime = _dateTime.Now.AddHours(24);
   }
 
 
   // Internal methods
   private async Task ScanDirRecursive(string path, int depth, CancellationToken stoppingToken)
   {
-    if(!CanScanDirectory(path, depth, stoppingToken))
+    if (!CanScanDirectory(path, depth, stoppingToken))
       return;
 
     _logger.LogDebug("Scanning directory depth {depth}: {path}", depth, path);
     var directory = _ioFactory.GetDirectoryInfo(path);
 
     foreach (var subDirInfo in directory.GetDirectories())
-      await ScanDirRecursive(subDirInfo.FullName, depth+1, stoppingToken);
+      await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
 
     var files = new List<FileEntity>();
     files.AddRange(directory.GetFiles().Select(MapFileEntry));
 
     await SaveResultsAsync(files, stoppingToken);
   }
-  
+
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
     _logger.LogInformation("Saving {count} file(s) to the DB", files.Count);
@@ -111,7 +118,7 @@ public class FileScannerService : IFileScannerService
   private static FileEntity MapFileEntry(IFileInfo fileInfo)
   {
     var pathParts = ExtractPathParts(fileInfo.FullName);
-    
+
     return new FileEntity
     {
       CreationTimeUtc = fileInfo.CreationTimeUtc,
@@ -160,7 +167,7 @@ public class FileScannerService : IFileScannerService
       _logger.LogInformation("Skipping configured path: {path}", path);
       return false;
     }
-    
+
     return true;
   }
 }
