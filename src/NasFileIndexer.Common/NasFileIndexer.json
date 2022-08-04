@@ -16,6 +16,6 @@
     "ScanPaths": [
       "\\\\192.168.0.60\\Media\\Series"
     ],
-    "MaxScanDepth": 128 
+    "MaxScanDepth": 15 
   } 
 }
