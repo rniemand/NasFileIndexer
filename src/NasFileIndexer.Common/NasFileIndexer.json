@@ -16,6 +16,9 @@
     "ScanPaths": [
       "\\\\192.168.0.60\\Media"
     ],
-    "MaxScanDepth": 15 
+    "MaxScanDepth": 15,
+    "SkipPaths": [
+      "\\\\192.168.0.60\\Media\\Cameras"
+    ] 
   } 
 }

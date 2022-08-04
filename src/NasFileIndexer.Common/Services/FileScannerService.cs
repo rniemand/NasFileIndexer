@@ -2,10 +2,10 @@ using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Repo;
 using Rn.NetCore.Common.Abstractions;
+using Rn.NetCore.Common.Extensions;
 using Rn.NetCore.Common.Factories;
 using Rn.NetCore.Common.Logging;
 using Rn.NetCore.Common.Wrappers;
-using System.IO;
 
 namespace NasFileIndexer.Common.Services;
 
@@ -21,7 +21,7 @@ public class FileScannerService : IFileScannerService
   private readonly IIOFactory _ioFactory;
   private readonly IFileRepo _fileRepo;
   private readonly NasFileIndexerConfig _config;
-  private DateTime _nextScanTime = DateTime.MinValue;
+  private DateTime _nextScanTime;
 
   public FileScannerService(ILoggerAdapter<FileScannerService> logger,
     IDateTimeAbstraction dateTime,
@@ -54,9 +54,11 @@ public class FileScannerService : IFileScannerService
     _nextScanTime = _dateTime.Now.AddHours(12);
   }
 
+
+  // Internal methods
   private async Task ScanDirRecursive(string path, int depth, CancellationToken stoppingToken)
   {
-    if (stoppingToken.IsCancellationRequested || depth > _config.MaxScanDepth)
+    if(!CanScanDirectory(path, depth, stoppingToken))
       return;
 
     _logger.LogDebug("Scanning directory depth {depth}: {path}", depth, path);
@@ -135,5 +137,30 @@ public class FileScannerService : IFileScannerService
       PathSegment14 = pathParts.Length >= 14 ? pathParts[13] : null,
       PathSegment15 = pathParts.Length >= 15 ? pathParts[14] : null
     };
+  }
+
+  private bool CanScanDirectory(string path, int depth, CancellationToken stoppingToken)
+  {
+    // Check to see if a STOP was requested
+    if (stoppingToken.IsCancellationRequested)
+      return false;
+
+    // Check to see if we have hit the max folder depth
+    if (depth > _config.MaxScanDepth)
+      return false;
+
+    // Check to see if we have any configured skip paths
+    if (_config.SkipPaths.Length == 0)
+      return true;
+
+    // Quick EXACT skip path check
+    // ReSharper disable once InvertIf
+    if (_config.SkipPaths.Any(x => x.IgnoreCaseEquals(path)))
+    {
+      _logger.LogInformation("Skipping configured path: {path}", path);
+      return false;
+    }
+    
+    return true;
   }
 }
