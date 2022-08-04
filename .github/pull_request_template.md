@@ -1,8 +1,8 @@
 <!--
-  💡 feat:
-  🐛 fix:
-  📄 docs:
-  🧪 test:
-  👷 build:
-  🛑 break:
+feat (💡):
+bug (🐛):
+docs (📄):
+test (🧪):
+build (👷):
+break (🛑):
 -->
