@@ -68,16 +68,9 @@ public class FileScannerService : IFileScannerService
     var files = new List<FileEntity>();
     files.AddRange(directory.GetFiles().Select(MapFileEntry));
 
-    await EnrichEntriesAsync(files, stoppingToken);
     await SaveResultsAsync(files, stoppingToken);
   }
-
-  private async Task EnrichEntriesAsync(List<FileEntity> files, CancellationToken stoppingToken)
-  {
-    _logger.LogDebug("Enriching {count} file(s)", files.Count);
-    await Task.CompletedTask;
-  }
-
+  
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
     _logger.LogInformation("Saving {count} file(s) to the DB", files.Count);
