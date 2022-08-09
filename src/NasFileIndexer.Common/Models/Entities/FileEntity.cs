@@ -8,7 +8,6 @@ public class FileEntity
   public DateTime LastWriteTimeUtc { get; set; }
   public long FileSize { get; set; }
   public string? Extension { get; set; } = string.Empty;
-  public string? DirectoryName { get; set; } = string.Empty;
   public string? FileName { get; set; } = string.Empty;
   public string? PathSegment01 { get; set; }
   public string? PathSegment02 { get; set; }

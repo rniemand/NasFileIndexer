@@ -12,14 +12,12 @@ public class FileRepoQueries : IFileRepoQueries
 
   public string Add() => @"INSERT INTO `Files`
     (
-	    `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `FileSize`, `Extension`,
-      `DirectoryName`, `FileName`,
+	    `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `FileSize`, `Extension`, `FileName`,
       `PathSegment01`, `PathSegment02`, `PathSegment03`, `PathSegment04`, `PathSegment05`,
       `PathSegment06`, `PathSegment07`, `PathSegment08`, `PathSegment09`, `PathSegment10`,
       `PathSegment11`, `PathSegment12`, `PathSegment13`, `PathSegment14`, `PathSegment15`
     ) VALUES (
-	    @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @FileSize, @Extension,
-	    @DirectoryName, @FileName,
+	    @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @FileSize, @Extension, @FileName,
       @PathSegment01, @PathSegment02, @PathSegment03, @PathSegment04, @PathSegment05,
       @PathSegment06, @PathSegment07, @PathSegment08, @PathSegment09, @PathSegment10,
       @PathSegment11, @PathSegment12, @PathSegment13, @PathSegment14, @PathSegment15

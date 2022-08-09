@@ -21,7 +21,6 @@ CREATE TABLE `Files` (
 	`PathSegment13` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`PathSegment14` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`PathSegment15` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`DirectoryName` VARCHAR(1024) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	PRIMARY KEY (`FileId`) USING BTREE,
 	INDEX `Extension` (`Extension`) USING BTREE
 )

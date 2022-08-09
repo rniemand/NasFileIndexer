@@ -124,7 +124,6 @@ public class FileScannerService : IFileScannerService
     return new FileEntity
     {
       CreationTimeUtc = fileInfo.CreationTimeUtc,
-      DirectoryName = fileInfo.DirectoryName ?? string.Empty,
       Extension = fileInfo.Extension,
       FileName = fileInfo.Name,
       FileSize = fileInfo.Length,
