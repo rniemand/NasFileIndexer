@@ -8,6 +8,7 @@ public interface IFileRepo
 {
   Task<int> TruncateTableAsync();
   Task<int> AddAsync(FileEntity fileEntity);
+  Task<int> AddManyAsync(List<FileEntity> entries);
 }
 
 public class FileRepo : BaseRepo<FileRepo>, IFileRepo
@@ -25,4 +26,7 @@ public class FileRepo : BaseRepo<FileRepo>, IFileRepo
 
   public Task<int> AddAsync(FileEntity fileEntity) =>
     ExecuteAsync(nameof(AddAsync), _queries.Add(), fileEntity);
+
+  public Task<int> AddManyAsync(List<FileEntity> entries) =>
+    ExecuteAsync(nameof(AddManyAsync), _queries.Add(), entries);
 }

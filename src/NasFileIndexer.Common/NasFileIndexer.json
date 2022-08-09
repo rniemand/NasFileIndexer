@@ -14,6 +14,9 @@
   },
   "NasFileIndexer": {
     "ScanPaths": [
+      "\\\\192.168.0.60\\Media\\Series\\Adult"
+    ],
+    "ScanPathsOriginal": [
       "\\\\192.168.0.60\\Media\\Series\\Adult",
       "\\\\192.168.0.60\\Media\\Series\\Kids",
       "\\\\192.168.0.60\\Media\\Series\\Teens"
@@ -21,6 +24,6 @@
     "MaxScanDepth": 15,
     "SkipPaths": [
       "\\\\192.168.0.60\\Media\\Cameras"
-    ] 
+    ]
   } 
 }

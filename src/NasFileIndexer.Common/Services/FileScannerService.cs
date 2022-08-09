@@ -77,15 +77,11 @@ public class FileScannerService : IFileScannerService
 
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
+    if (stoppingToken.IsCancellationRequested)
+      return;
+
     _logger.LogDebug("Saving {count} file(s) to the DB", files.Count);
-
-    foreach (var file in files)
-    {
-      if (stoppingToken.IsCancellationRequested)
-        return;
-
-      await _fileRepo.AddAsync(file);
-    }
+    await _fileRepo.AddManyAsync(files);
   }
 
   private static string[] ExtractPathParts(string filePath)
