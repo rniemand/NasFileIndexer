@@ -36,6 +36,10 @@ public class FileScannerService : IFileScannerService
 
     _config = configProvider.GetConfig();
     _nextScanTime = _dateTime.Now.AddSeconds(1);
+
+#if DEBUG
+    _nextScanTime = _dateTime.MinValue;
+#endif
   }
 
   public async Task TickAsync(CancellationToken stoppingToken)

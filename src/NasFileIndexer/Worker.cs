@@ -1,6 +1,4 @@
-using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Services;
-using Rn.NetCore.Common.Logging;
 
 namespace NasFileIndexer
 {
