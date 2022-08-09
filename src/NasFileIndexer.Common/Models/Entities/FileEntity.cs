@@ -7,6 +7,9 @@ public class FileEntity
   public DateTime LastAccessTimeUtc { get; set; }
   public DateTime LastWriteTimeUtc { get; set; }
   public long FileSize { get; set; }
+  public double FileSizeKb { get; set; }
+  public double FileSizeMb { get; set; }
+  public double FileSizeGb { get; set; }
   public string? Extension { get; set; } = string.Empty;
   public string? FileName { get; set; } = string.Empty;
   public string? PathSegment01 { get; set; }

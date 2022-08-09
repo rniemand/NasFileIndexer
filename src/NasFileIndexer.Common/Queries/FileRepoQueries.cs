@@ -12,14 +12,16 @@ public class FileRepoQueries : IFileRepoQueries
 
   public string Add() => @"INSERT INTO `Files`
     (
-	    `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `FileSize`, `Extension`, `FileName`,
+	    `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `Extension`, `FileName`,
       `PathSegment01`, `PathSegment02`, `PathSegment03`, `PathSegment04`, `PathSegment05`,
       `PathSegment06`, `PathSegment07`, `PathSegment08`, `PathSegment09`, `PathSegment10`,
-      `PathSegment11`, `PathSegment12`, `PathSegment13`, `PathSegment14`, `PathSegment15`
+      `PathSegment11`, `PathSegment12`, `PathSegment13`, `PathSegment14`, `PathSegment15`,
+      `FileSize`, `FileSizeKb`, `FileSizeMb`, `FileSizeGb`
     ) VALUES (
-	    @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @FileSize, @Extension, @FileName,
+	    @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @Extension, @FileName,
       @PathSegment01, @PathSegment02, @PathSegment03, @PathSegment04, @PathSegment05,
       @PathSegment06, @PathSegment07, @PathSegment08, @PathSegment09, @PathSegment10,
-      @PathSegment11, @PathSegment12, @PathSegment13, @PathSegment14, @PathSegment15
+      @PathSegment11, @PathSegment12, @PathSegment13, @PathSegment14, @PathSegment15,
+      @FileSize, @FileSizeKb, @FileSizeMb, @FileSizeGb
     );";
 }

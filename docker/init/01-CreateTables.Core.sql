@@ -4,6 +4,9 @@ CREATE TABLE `Files` (
 	`LastAccessTimeUtc` DATETIME NOT NULL,
 	`LastWriteTimeUtc` DATETIME NOT NULL,
 	`FileSize` BIGINT(20) NOT NULL DEFAULT '0',
+	`FileSizeKb` DOUBLE NOT NULL DEFAULT '0',
+	`FileSizeMb` DOUBLE NOT NULL DEFAULT '0',
+	`FileSizeGb` DOUBLE NOT NULL DEFAULT '0',
 	`Extension` VARCHAR(16) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`FileName` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment01` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
@@ -26,4 +29,5 @@ CREATE TABLE `Files` (
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
+AUTO_INCREMENT=690
 ;

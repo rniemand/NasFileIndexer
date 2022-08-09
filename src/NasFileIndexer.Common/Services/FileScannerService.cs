@@ -127,6 +127,9 @@ public class FileScannerService : IFileScannerService
       Extension = fileInfo.Extension,
       FileName = fileInfo.Name,
       FileSize = fileInfo.Length,
+      FileSizeKb = GetFileSizeKb(fileInfo),
+      FileSizeMb = GetFileSizeMb(fileInfo),
+      FileSizeGb = GetFileSizeGb(fileInfo),
       LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
       LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
       PathSegment01 = pathParts.Length >= 1 ? pathParts[0] : null,
@@ -178,4 +181,13 @@ public class FileScannerService : IFileScannerService
     _logger.LogTrace("Skipping RegEx path: {path}", path);
     return false;
   }
+
+  private static double GetFileSizeKb(IFileInfo fi) =>
+    Math.Round(((double)fi.Length / 1024), 4);
+
+  private static double GetFileSizeMb(IFileInfo fi) =>
+    Math.Round(((double)fi.Length / 1048576), 4);
+
+  private static double GetFileSizeGb(IFileInfo fi) =>
+    Math.Round(((double)fi.Length / 1073741824), 4);
 }
