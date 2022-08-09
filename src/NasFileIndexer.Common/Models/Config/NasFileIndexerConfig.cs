@@ -12,4 +12,7 @@ public class NasFileIndexerConfig
 
   [ConfigurationKeyName("SkipPaths")]
   public string[] SkipPaths { get; set; } = Array.Empty<string>();
+
+  [ConfigurationKeyName("SkipPathExpressions")]
+  public string[] SkipPathExpressions { get; set; } = Array.Empty<string>();
 }

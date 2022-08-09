@@ -36,6 +36,10 @@ public class FileScannerService : IFileScannerService
 
     _config = configProvider.GetConfig();
     _nextScanTime = _dateTime.Now.AddSeconds(1);
+
+#if DEBUG
+    _nextScanTime = _dateTime.MinValue;
+#endif
   }
 
   public async Task TickAsync(CancellationToken stoppingToken)
@@ -63,29 +67,32 @@ public class FileScannerService : IFileScannerService
     if (!CanScanDirectory(path, depth, stoppingToken))
       return;
 
-    _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
-    var directory = _ioFactory.GetDirectoryInfo(path);
+    try
+    {
+      _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
+      var directory = _ioFactory.GetDirectoryInfo(path);
 
-    foreach (var subDirInfo in directory.GetDirectories())
-      await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
+      foreach (var subDirInfo in directory.GetDirectories())
+        await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
 
-    var files = new List<FileEntity>();
-    files.AddRange(directory.GetFiles().Select(MapFileEntry));
+      var files = new List<FileEntity>();
+      files.AddRange(directory.GetFiles().Select(MapFileEntry));
 
-    await SaveResultsAsync(files, stoppingToken);
+      await SaveResultsAsync(files, stoppingToken);
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Failed to index directory '{path}': {error}", path, ex.HumanStackTrace());
+    }
   }
 
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
+    if (stoppingToken.IsCancellationRequested)
+      return;
+
     _logger.LogDebug("Saving {count} file(s) to the DB", files.Count);
-
-    foreach (var file in files)
-    {
-      if (stoppingToken.IsCancellationRequested)
-        return;
-
-      await _fileRepo.AddAsync(file);
-    }
+    await _fileRepo.AddManyAsync(files);
   }
 
   private static string[] ExtractPathParts(string filePath)
@@ -117,10 +124,12 @@ public class FileScannerService : IFileScannerService
     return new FileEntity
     {
       CreationTimeUtc = fileInfo.CreationTimeUtc,
-      DirectoryName = fileInfo.DirectoryName ?? string.Empty,
       Extension = fileInfo.Extension,
       FileName = fileInfo.Name,
       FileSize = fileInfo.Length,
+      FileSizeKb = GetFileSizeKb(fileInfo),
+      FileSizeMb = GetFileSizeMb(fileInfo),
+      FileSizeGb = GetFileSizeGb(fileInfo),
       LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
       LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
       PathSegment01 = pathParts.Length >= 1 ? pathParts[0] : null,
@@ -156,13 +165,29 @@ public class FileScannerService : IFileScannerService
       return true;
 
     // Quick EXACT skip path check
-    // ReSharper disable once InvertIf
     if (_config.SkipPaths.Any(x => x.IgnoreCaseEquals(path)))
     {
-      _logger.LogInformation("Skipping configured path: {path}", path);
+      _logger.LogTrace("Skipping configured path: {path}", path);
       return false;
     }
 
-    return true;
+    // Check to see if we need to match on RegularExpression paths
+    if (_config.SkipPathExpressions.Length == 0)
+      return true;
+
+    if (!_config.SkipPathExpressions.Any(path.MatchesRegex))
+      return true;
+
+    _logger.LogTrace("Skipping RegEx path: {path}", path);
+    return false;
   }
+
+  private static double GetFileSizeKb(IFileInfo fi) =>
+    Math.Round(((double)fi.Length / 1024), 4);
+
+  private static double GetFileSizeMb(IFileInfo fi) =>
+    Math.Round(((double)fi.Length / 1048576), 4);
+
+  private static double GetFileSizeGb(IFileInfo fi) =>
+    Math.Round(((double)fi.Length / 1073741824), 4);
 }

@@ -4,6 +4,9 @@ CREATE TABLE `Files` (
 	`LastAccessTimeUtc` DATETIME NOT NULL,
 	`LastWriteTimeUtc` DATETIME NOT NULL,
 	`FileSize` BIGINT(20) NOT NULL DEFAULT '0',
+	`FileSizeKb` DOUBLE NOT NULL DEFAULT '0',
+	`FileSizeMb` DOUBLE NOT NULL DEFAULT '0',
+	`FileSizeGb` DOUBLE NOT NULL DEFAULT '0',
 	`Extension` VARCHAR(16) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`FileName` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment01` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
@@ -21,10 +24,10 @@ CREATE TABLE `Files` (
 	`PathSegment13` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`PathSegment14` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`PathSegment15` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`DirectoryName` VARCHAR(1024) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	PRIMARY KEY (`FileId`) USING BTREE,
 	INDEX `Extension` (`Extension`) USING BTREE
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
+AUTO_INCREMENT=690
 ;
