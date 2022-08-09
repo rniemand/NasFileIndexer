@@ -67,16 +67,23 @@ public class FileScannerService : IFileScannerService
     if (!CanScanDirectory(path, depth, stoppingToken))
       return;
 
-    _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
-    var directory = _ioFactory.GetDirectoryInfo(path);
+    try
+    {
+      _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
+      var directory = _ioFactory.GetDirectoryInfo(path);
 
-    foreach (var subDirInfo in directory.GetDirectories())
-      await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
+      foreach (var subDirInfo in directory.GetDirectories())
+        await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
 
-    var files = new List<FileEntity>();
-    files.AddRange(directory.GetFiles().Select(MapFileEntry));
+      var files = new List<FileEntity>();
+      files.AddRange(directory.GetFiles().Select(MapFileEntry));
 
-    await SaveResultsAsync(files, stoppingToken);
+      await SaveResultsAsync(files, stoppingToken);
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Failed to index directory '{path}': {error}", path, ex.HumanStackTrace());
+    }
   }
 
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
