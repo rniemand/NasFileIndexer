@@ -156,13 +156,20 @@ public class FileScannerService : IFileScannerService
       return true;
 
     // Quick EXACT skip path check
-    // ReSharper disable once InvertIf
     if (_config.SkipPaths.Any(x => x.IgnoreCaseEquals(path)))
     {
-      _logger.LogInformation("Skipping configured path: {path}", path);
+      _logger.LogTrace("Skipping configured path: {path}", path);
       return false;
     }
 
-    return true;
+    // Check to see if we need to match on RegularExpression paths
+    if (_config.SkipPathExpressions.Length == 0)
+      return true;
+
+    if (!_config.SkipPathExpressions.Any(path.MatchesRegex))
+      return true;
+
+    _logger.LogTrace("Skipping RegEx path: {path}", path);
+    return false;
   }
 }
