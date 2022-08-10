@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Repo;
@@ -70,9 +71,9 @@ public class FileScannerService : IFileScannerService
     try
     {
       _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
-      var directory = _ioFactory.GetDirectoryInfo(path);
+      IDirectoryInfo directory = _ioFactory.GetDirectoryInfo(path);
 
-      foreach (var subDirInfo in directory.GetDirectories())
+      foreach (IDirectoryInfo subDirInfo in directory.GetDirectories())
         await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
 
       var files = new List<FileEntity>();
@@ -161,24 +162,34 @@ public class FileScannerService : IFileScannerService
       return false;
 
     // Check to see if we have any configured skip paths
-    if (_config.SkipPaths.Length == 0)
-      return true;
-
-    // Quick EXACT skip path check
-    if (_config.SkipPaths.Any(x => x.IgnoreCaseEquals(path)))
+    if (_config.SkipPaths.Length > 0)
     {
-      _logger.LogTrace("Skipping configured path: {path}", path);
-      return false;
+      if (_config.SkipPaths.Any(x => x.IgnoreCaseEquals(path)))
+      {
+        _logger.LogTrace("Skipping configured path: {path}", path);
+        return false;
+      }
     }
 
-    // Check to see if we need to match on RegularExpression paths
-    if (_config.SkipPathExpressions.Length == 0)
-      return true;
+    // Run RegEx patterns to see if we need to exclude this file
+    if (_config.SkipPathExpressions.Length <= 0)
+      return false;
 
-    if (!_config.SkipPathExpressions.Any(path.MatchesRegex))
-      return true;
+    return !MatchesAnyExcludePattern(path);
+  }
 
-    _logger.LogTrace("Skipping RegEx path: {path}", path);
+  private bool MatchesAnyExcludePattern(string path)
+  {
+
+    foreach (var expression in _config.SkipPathExpressions)
+    {
+      if (!Regex.IsMatch(path, expression, RegexOptions.IgnoreCase | RegexOptions.Singleline))
+        continue;
+
+      _logger.LogDebug("Skipping path based on RegEx pattern ({rxp}): {path}", expression, path);
+      return true;
+    }
+
     return false;
   }
 
