@@ -12,6 +12,7 @@ public class FileEntity
   public double FileSizeGb { get; set; }
   public string? Extension { get; set; } = string.Empty;
   public string? FileName { get; set; } = string.Empty;
+  public string FilePath { get; set; } = string.Empty;
   public string? PathSegment01 { get; set; }
   public string? PathSegment02 { get; set; }
   public string? PathSegment03 { get; set; }

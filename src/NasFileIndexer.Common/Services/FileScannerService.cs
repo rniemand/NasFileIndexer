@@ -133,6 +133,7 @@ public class FileScannerService : IFileScannerService
       FileSizeGb = GetFileSizeGb(fileInfo),
       LastAccessTimeUtc = fileInfo.LastAccessTimeUtc,
       LastWriteTimeUtc = fileInfo.LastWriteTimeUtc,
+      FilePath = fileInfo.FullName,
       PathSegment01 = pathParts.Length >= 1 ? pathParts[0] : null,
       PathSegment02 = pathParts.Length >= 2 ? pathParts[1] : null,
       PathSegment03 = pathParts.Length >= 3 ? pathParts[2] : null,

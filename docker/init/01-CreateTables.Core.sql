@@ -9,6 +9,7 @@ CREATE TABLE `Files` (
 	`FileSizeGb` DOUBLE NOT NULL DEFAULT '0',
 	`Extension` VARCHAR(16) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`FileName` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+  `FilePath` VARCHAR(1024) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment01` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment02` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment03` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
