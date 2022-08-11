@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NasFileIndexer.Common.Mappers;
 using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Queries;
 using NasFileIndexer.Common.Repo;
@@ -38,6 +39,9 @@ public static class ServiceCollectionExtensions
 
       // Services
       .AddSingleton<IFileScannerService, FileScannerService>()
+
+      // Mappers
+      .AddSingleton<IRepoObjectMapper, RepoObjectMapper>()
 
       // Metrics
       .AddRnMetricsBase(config)
