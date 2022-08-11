@@ -45,6 +45,19 @@ public class DirectoryScanner : IDirectoryScanner
     if (stoppingToken.IsCancellationRequested)
       return;
 
+    IDirectoryInfo directory = _ioFactory.GetDirectoryInfo(path);
+
+    var files = new List<FileEntity>();
+    files.AddRange(directory.GetFiles().Select(_mapper.MapFileEntry));
+    await SaveResultsAsync(files, stoppingToken);
+    
+    Parallel.ForEach(directory.GetDirectories(), async dirInfo =>
+    {
+      await ScanDirRecursive(dirInfo.FullName, 2, stoppingToken);
+    });
+
+
+
     //if (!CanScanDirectory(path, depth, stoppingToken))
     //  return;
 
@@ -56,10 +69,6 @@ public class DirectoryScanner : IDirectoryScanner
     //  foreach (IDirectoryInfo subDirInfo in directory.GetDirectories())
     //    await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
 
-    //  var files = new List<FileEntity>();
-    //  files.AddRange(directory.GetFiles().Select(_mapper.MapFileEntry));
-
-    //  await SaveResultsAsync(files, stoppingToken);
     //}
     //catch (Exception ex)
     //{
