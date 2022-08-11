@@ -34,6 +34,7 @@ public static class ServiceCollectionExtensions
 
       // Providers
       .AddSingleton<IConfigProvider, ConfigProvider>()
+      .AddTransient<IDirectoryScanner, DirectoryScanner>()
 
       // Services
       .AddSingleton<IFileScannerService, FileScannerService>()

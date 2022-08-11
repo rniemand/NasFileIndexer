@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Repo;
@@ -18,6 +19,7 @@ public interface IFileScannerService
 public class FileScannerService : IFileScannerService
 {
   private readonly ILoggerAdapter<FileScannerService> _logger;
+  private readonly IServiceProvider _serviceProvider;
   private readonly IDateTimeAbstraction _dateTime;
   private readonly IIOFactory _ioFactory;
   private readonly IFileRepo _fileRepo;
@@ -28,12 +30,14 @@ public class FileScannerService : IFileScannerService
     IDateTimeAbstraction dateTime,
     IIOFactory ioFactory,
     IConfigProvider configProvider,
-    IFileRepo fileRepo)
+    IFileRepo fileRepo,
+    IServiceProvider serviceProvider)
   {
     _logger = logger;
     _dateTime = dateTime;
     _ioFactory = ioFactory;
     _fileRepo = fileRepo;
+    _serviceProvider = serviceProvider;
 
     _config = configProvider.GetConfig();
     _nextScanTime = _dateTime.Now.AddSeconds(1);
@@ -67,6 +71,13 @@ public class FileScannerService : IFileScannerService
   {
     if (!CanScanDirectory(path, depth, stoppingToken))
       return;
+
+    await _serviceProvider
+      .GetRequiredService<IDirectoryScanner>()
+      .ScanAsync(_config, path, stoppingToken);
+
+    Console.WriteLine();
+    Console.WriteLine();
 
     try
     {
