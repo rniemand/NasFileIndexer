@@ -66,7 +66,9 @@ public class DirectoryScanner : IDirectoryScanner
         .Select(subDirInfo => ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken))
         .ToList();
 
-      _logger.LogTrace("Waiting on {count} tasks(s) to complete", scanTasks.Count);
+      if (scanTasks.Count > 1)
+        _logger.LogTrace("Waiting on {count} tasks(s) to complete", scanTasks.Count);
+
       await Task.WhenAll(scanTasks);
 
       // Index top-level files
