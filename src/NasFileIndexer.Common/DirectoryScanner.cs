@@ -87,7 +87,7 @@ public class DirectoryScanner : IDirectoryScanner
 
   private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
-    if (stoppingToken.IsCancellationRequested)
+    if (stoppingToken.IsCancellationRequested || files.Count == 0)
       return;
 
     _logger.LogDebug("Saving {count} file(s) to the DB", files.Count);
