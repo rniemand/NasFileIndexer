@@ -45,39 +45,9 @@ public class DirectoryScanner : IDirectoryScanner
     if (stoppingToken.IsCancellationRequested)
       return;
 
-    IDirectoryInfo directory = _ioFactory.GetDirectoryInfo(path);
-
-    var files = new List<FileEntity>();
-    files.AddRange(directory.GetFiles().Select(_mapper.MapFileEntry));
-    await SaveResultsAsync(files, stoppingToken);
-    
-    Parallel.ForEach(directory.GetDirectories(), async dirInfo =>
-    {
-      await ScanDirRecursive(dirInfo.FullName, 2, stoppingToken);
-    });
-
-
-
-    //if (!CanScanDirectory(path, depth, stoppingToken))
-    //  return;
-
-    //try
-    //{
-    //  _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
-    //  IDirectoryInfo directory = _ioFactory.GetDirectoryInfo(path);
-
-    //  foreach (IDirectoryInfo subDirInfo in directory.GetDirectories())
-    //    await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
-
-    //}
-    //catch (Exception ex)
-    //{
-    //  _logger.LogError(ex, "Failed to index directory '{path}': {error}", path, ex.HumanStackTrace());
-    //}
-
-
-    await Task.CompletedTask;
+    await ScanDirRecursive(path, 1, stoppingToken);
   }
+
 
   // Internal scanning methods
   private async Task ScanDirRecursive(string path, int depth, CancellationToken stoppingToken)
@@ -90,11 +60,20 @@ public class DirectoryScanner : IDirectoryScanner
       _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
       IDirectoryInfo directory = _ioFactory.GetDirectoryInfo(path);
 
-      foreach (IDirectoryInfo subDirInfo in directory.GetDirectories())
-        await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
+      // Recurse index directories
+      var scanTasks = directory
+        .GetDirectories()
+        .Select(subDirInfo => ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken))
+        .ToList();
 
+      _logger.LogTrace("Waiting on {count} tasks(s) to complete", scanTasks.Count);
+      await Task.WhenAll(scanTasks);
+
+      // Index top-level files
       var files = new List<FileEntity>();
-      files.AddRange(directory.GetFiles().Select(_mapper.MapFileEntry));
+      files.AddRange(directory
+        .GetFiles()
+        .Select(_mapper.MapFileEntry));
 
       await SaveResultsAsync(files, stoppingToken);
     }
