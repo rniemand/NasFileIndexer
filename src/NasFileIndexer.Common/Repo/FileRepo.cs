@@ -9,15 +9,16 @@ namespace NasFileIndexer.Common.Repo;
 
 public interface IFileRepo
 {
-  Task<int> TruncateTableAsync();
-  Task<int> AddAsync(FileEntity fileEntity);
-  Task<int> AddManyAsync(List<FileEntity> entries);
+  int TruncateTable();
+  int Add(FileEntity fileEntity);
+  int AddMany(List<FileEntity> entries);
 }
 
 public class FileRepo : IFileRepo
 {
   private readonly IFileRepoQueries _queries;
   private readonly MySqlConnection _connection;
+  private readonly object _lockObject = new();
 
   public FileRepo(IFileRepoQueries queries, IConfiguration configuration)
   {
@@ -26,48 +27,65 @@ public class FileRepo : IFileRepo
     _queries = queries;
   }
 
-  public Task<int> TruncateTableAsync()
+  public int TruncateTable()
   {
     EnsureConnected();
-    return _connection.ExecuteAsync(_queries.TruncateTable());
+
+    int result;
+    lock (_lockObject)
+      result = _connection.Execute(_queries.TruncateTable());
+
+    return result;
   }
 
-  public Task<int> AddAsync(FileEntity fileEntity)
+  public int Add(FileEntity fileEntity)
   {
     EnsureConnected();
 
-    return _connection.ExecuteAsync(_queries.Add(), fileEntity);
+    var result = 0;
+    lock (_lockObject)
+      result = _connection.Execute(_queries.Add(), fileEntity);
+
+    return result;
   }
 
-  public Task<int> AddManyAsync(List<FileEntity> entries)
+  public int AddMany(List<FileEntity> entries)
   {
     EnsureConnected();
-    return _connection.ExecuteAsync(_queries.Add(), entries);
+
+    var result = 0;
+    lock (_lockObject)
+      result = _connection.Execute(_queries.Add(), entries);
+
+    return result;
   }
 
   private void EnsureConnected()
   {
-    switch (_connection.State)
+    lock (_lockObject)
     {
-      case ConnectionState.Open:
+      switch (_connection.State)
+      {
+        case ConnectionState.Open:
+          return;
+        case ConnectionState.Closed:
+          _connection.Open();
+          break;
+      }
+
+      if (_connection.State != ConnectionState.Broken)
         return;
-      case ConnectionState.Closed:
-        _connection.Open();
-        break;
-    }
 
-    if (_connection.State != ConnectionState.Broken)
-      return;
+      try
+      {
+        _connection.Close();
+      }
+      catch (Exception)
+      {
+        // swallow
+      }
 
-    try
-    {
-      _connection.Close();
+      _connection.Open();
     }
-    catch (Exception)
-    {
-      // swallow
-    }
-    
-    _connection.Open();
   }
 }

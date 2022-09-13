@@ -44,13 +44,14 @@ public class FileScannerService : IFileScannerService
       _config.ScanPaths.Length);
 
     // Ensure that we start with a clean "Files" DB table
-    await _fileRepo.TruncateTableAsync();
+    _fileRepo.TruncateTable();
 
     Parallel.ForEach(_config.ScanPaths, async path =>
       await ScanDirRecursive(path, stoppingToken));
 
     _logger.LogInformation("Indexing completed");
     _nextScanTime = DateTime.Now.AddHours(24);
+    await Task.CompletedTask;
   }
 
 

@@ -72,7 +72,7 @@ public class DirectoryScanner : IDirectoryScanner
         .GetFiles()
         .Select(_mapper.MapFileEntry));
 
-      await SaveResultsAsync(files, stoppingToken);
+      SaveResults(files, stoppingToken);
     }
     catch (Exception ex)
     {
@@ -80,13 +80,13 @@ public class DirectoryScanner : IDirectoryScanner
     }
   }
 
-  private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
+  private void SaveResults(List<FileEntity> files, CancellationToken stoppingToken)
   {
     if (stoppingToken.IsCancellationRequested || files.Count == 0)
       return;
 
     _logger.LogDebug("Saving {count} file(s) to the DB", files.Count);
-    await _fileRepo.AddManyAsync(files);
+    _fileRepo.AddMany(files);
   }
 
   private bool CanScanDirectory(string path, int depth, CancellationToken stoppingToken)
