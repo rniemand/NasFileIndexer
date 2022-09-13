@@ -9,7 +9,7 @@ CREATE TABLE `Files` (
 	`FileSizeGb` DOUBLE NOT NULL DEFAULT '0',
 	`Extension` VARCHAR(16) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`FileName` VARCHAR(256) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
-  `FilePath` VARCHAR(1024) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+	`FilePath` VARCHAR(1024) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment01` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment02` VARCHAR(128) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
 	`PathSegment03` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
@@ -20,15 +20,22 @@ CREATE TABLE `Files` (
 	`PathSegment08` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`PathSegment09` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`PathSegment10` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`PathSegment11` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`PathSegment12` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`PathSegment13` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`PathSegment14` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
-	`PathSegment15` VARCHAR(128) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`VideoResolution` VARCHAR(32) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`IsVideoFile` BIT(1) NULL DEFAULT b'0',
+	`HasSubtitles` BIT(1) NULL DEFAULT b'0',
+	`FrameRate` DOUBLE NULL DEFAULT NULL,
+	`VideoWidth` SMALLINT(6) NULL DEFAULT '0',
+	`VideoHeight` SMALLINT(6) NULL DEFAULT '0',
+	`AudioStreamCount` TINYINT(4) NULL DEFAULT '0',
+	`VideoStreamCount` TINYINT(4) NULL DEFAULT '0',
+	`SubtitleCount` TINYINT(4) NULL DEFAULT '0',
+	`VideoDuration` VARCHAR(32) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`VideoDurationSec` DOUBLE NULL DEFAULT NULL,
 	PRIMARY KEY (`FileId`) USING BTREE,
-	INDEX `Extension` (`Extension`) USING BTREE
+	INDEX `Extension` (`Extension`) USING BTREE,
+	INDEX `IsVideoFile` (`IsVideoFile`) USING BTREE,
+	INDEX `HasSubtitles` (`HasSubtitles`) USING BTREE
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
-AUTO_INCREMENT=0
 ;

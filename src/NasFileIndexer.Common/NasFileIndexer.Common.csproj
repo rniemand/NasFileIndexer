@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MediaInfo.Wrapper.Core" Version="21.9.2" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.1" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.0.4" />
     <PackageReference Include="Rn.NetCore.Common" Version="6.1.0.100" />
     <PackageReference Include="Rn.NetCore.DbCommon" Version="6.1.1.104" />
   </ItemGroup>
