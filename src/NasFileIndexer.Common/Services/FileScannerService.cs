@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using NasFileIndexer.Common.Models;
-using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Repo;
 using RnCore.Logging;
 
@@ -20,7 +19,7 @@ public class FileScannerService : IFileScannerService
   private DateTime _nextScanTime;
 
   public FileScannerService(ILoggerAdapter<FileScannerService> logger,
-    IConfigProvider configProvider,
+    NasFileIndexerConfig config,
     IFileRepo fileRepo,
     IServiceProvider serviceProvider)
   {
@@ -28,7 +27,7 @@ public class FileScannerService : IFileScannerService
     _fileRepo = fileRepo;
     _serviceProvider = serviceProvider;
 
-    _config = configProvider.GetConfig();
+    _config = config;
     _nextScanTime = DateTime.Now.AddSeconds(1);
 
 #if DEBUG
