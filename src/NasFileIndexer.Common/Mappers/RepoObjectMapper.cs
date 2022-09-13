@@ -102,6 +102,6 @@ public class RepoObjectMapper : IRepoObjectMapper
   private static double GetFileSizeGb(FileInfo fi) =>
     Math.Round(((double)fi.Length / 1073741824), 4);
 
-  private bool IsSupportedMediaFile(FileEntity file) =>
+  private static bool IsSupportedMediaFile(FileEntity file) =>
     file.Extension.IgnoreCaseEquals(".mkv");
 }
