@@ -1,19 +1,18 @@
 using MediaInfo;
 using NasFileIndexer.Common.Models;
-using Rn.NetCore.Common.Wrappers;
 using MediaInfo.Model;
-using Rn.NetCore.Common.Extensions;
+using NasFileIndexer.Common.Extensions;
 
 namespace NasFileIndexer.Common.Mappers;
 
 public interface IRepoObjectMapper
 {
-  FileEntity MapFileEntry(IFileInfo fileInfo);
+  FileEntity MapFileEntry(FileInfo fileInfo);
 }
 
 public class RepoObjectMapper : IRepoObjectMapper
 {
-  public FileEntity MapFileEntry(IFileInfo fileInfo)
+  public FileEntity MapFileEntry(FileInfo fileInfo)
   {
     var pathParts = ExtractPathParts(fileInfo.FullName);
     
@@ -94,15 +93,15 @@ public class RepoObjectMapper : IRepoObjectMapper
     return pathParts.ToArray();
   }
 
-  private static double GetFileSizeKb(IFileInfo fi) =>
+  private static double GetFileSizeKb(FileInfo fi) =>
     Math.Round(((double)fi.Length / 1024), 4);
 
-  private static double GetFileSizeMb(IFileInfo fi) =>
+  private static double GetFileSizeMb(FileInfo fi) =>
     Math.Round(((double)fi.Length / 1048576), 4);
 
-  private static double GetFileSizeGb(IFileInfo fi) =>
+  private static double GetFileSizeGb(FileInfo fi) =>
     Math.Round(((double)fi.Length / 1073741824), 4);
 
-  private bool IsSupportedMediaFile(FileEntity file) =>
+  private static bool IsSupportedMediaFile(FileEntity file) =>
     file.Extension.IgnoreCaseEquals(".mkv");
 }

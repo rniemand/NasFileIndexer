@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using NasFileIndexer.Common.Models;
-using Rn.NetCore.Common.Logging;
+using RnCore.Logging;
 
 namespace NasFileIndexer.Common.Providers;
 

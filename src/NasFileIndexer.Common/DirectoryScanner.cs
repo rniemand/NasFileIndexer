@@ -1,11 +1,9 @@
 using System.Text.RegularExpressions;
+using NasFileIndexer.Common.Extensions;
 using NasFileIndexer.Common.Mappers;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Repo;
-using Rn.NetCore.Common.Extensions;
-using Rn.NetCore.Common.Factories;
-using Rn.NetCore.Common.Logging;
-using Rn.NetCore.Common.Wrappers;
+using RnCore.Logging;
 
 namespace NasFileIndexer.Common;
 
@@ -20,18 +18,15 @@ public class DirectoryScanner : IDirectoryScanner
   private readonly ILoggerAdapter<DirectoryScanner> _logger;
   private readonly IFileRepo _fileRepo;
   private readonly IRepoObjectMapper _mapper;
-  private readonly IIOFactory _ioFactory;
   private NasFileIndexerConfig _config = new();
 
   public DirectoryScanner(ILoggerAdapter<DirectoryScanner> logger,
     IFileRepo fileRepo,
-    IRepoObjectMapper mapper,
-    IIOFactory ioFactory)
+    IRepoObjectMapper mapper)
   {
     _logger = logger;
     _fileRepo = fileRepo;
     _mapper = mapper;
-    _ioFactory = ioFactory;
   }
 
   public IDirectoryScanner Configure(NasFileIndexerConfig config)
@@ -58,7 +53,7 @@ public class DirectoryScanner : IDirectoryScanner
     try
     {
       _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
-      IDirectoryInfo directory = _ioFactory.GetDirectoryInfo(path);
+      var directory = new DirectoryInfo(path);
 
       // Recurse index directories
       var scanTasks = directory
@@ -81,7 +76,7 @@ public class DirectoryScanner : IDirectoryScanner
     }
     catch (Exception ex)
     {
-      _logger.LogError(ex, "Failed to index directory '{path}': {error}", path, ex.HumanStackTrace());
+      _logger.LogError(ex, "Failed to index directory '{path}': {error}", path, ex.StackTrace);
     }
   }
 

@@ -2,8 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Providers;
 using NasFileIndexer.Common.Repo;
-using Rn.NetCore.Common.Abstractions;
-using Rn.NetCore.Common.Logging;
+using RnCore.Logging;
 
 namespace NasFileIndexer.Common.Services;
 
@@ -16,33 +15,30 @@ public class FileScannerService : IFileScannerService
 {
   private readonly ILoggerAdapter<FileScannerService> _logger;
   private readonly IServiceProvider _serviceProvider;
-  private readonly IDateTimeAbstraction _dateTime;
   private readonly IFileRepo _fileRepo;
   private readonly NasFileIndexerConfig _config;
   private DateTime _nextScanTime;
 
   public FileScannerService(ILoggerAdapter<FileScannerService> logger,
-    IDateTimeAbstraction dateTime,
     IConfigProvider configProvider,
     IFileRepo fileRepo,
     IServiceProvider serviceProvider)
   {
     _logger = logger;
-    _dateTime = dateTime;
     _fileRepo = fileRepo;
     _serviceProvider = serviceProvider;
 
     _config = configProvider.GetConfig();
-    _nextScanTime = _dateTime.Now.AddSeconds(1);
+    _nextScanTime = DateTime.Now.AddSeconds(1);
 
 #if DEBUG
-    _nextScanTime = _dateTime.MinValue;
+    _nextScanTime = DateTime.MinValue;
 #endif
   }
 
   public async Task TickAsync(CancellationToken stoppingToken)
   {
-    if (_dateTime.Now < _nextScanTime)
+    if (DateTime.Now < _nextScanTime)
       return;
 
     _logger.LogInformation("Starting to index {count} source(s)",
@@ -55,7 +51,7 @@ public class FileScannerService : IFileScannerService
       await ScanDirRecursive(path, stoppingToken));
 
     _logger.LogInformation("Indexing completed");
-    _nextScanTime = _dateTime.Now.AddHours(24);
+    _nextScanTime = DateTime.Now.AddHours(24);
   }
 
 

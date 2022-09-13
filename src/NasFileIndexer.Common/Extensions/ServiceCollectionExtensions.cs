@@ -7,11 +7,7 @@ using NasFileIndexer.Common.Queries;
 using NasFileIndexer.Common.Repo;
 using NasFileIndexer.Common.Services;
 using NLog.Extensions.Logging;
-using Rn.NetCore.Common.Abstractions;
-using Rn.NetCore.Common.Factories;
-using Rn.NetCore.Common.Logging;
-using Rn.NetCore.DbCommon;
-using Rn.NetCore.Metrics.Extensions;
+using RnCore.Logging;
 
 namespace NasFileIndexer.Common.Extensions;
 
@@ -23,13 +19,7 @@ public static class ServiceCollectionExtensions
       // Configuration
       .AddSingleton(config)
 
-      // Abstractions
-      .AddSingleton<IFileAbstraction, FileAbstraction>()
-      .AddSingleton<IDateTimeAbstraction, DateTimeAbstraction>()
-      .AddSingleton<IIOFactory, IOFactory>()
-
       // DB Stuff
-      .AddRnDbMySql(config)
       .AddSingleton<IFileRepoQueries, FileRepoQueries>()
       .AddSingleton<IFileRepo, FileRepo>()
 
@@ -42,9 +32,6 @@ public static class ServiceCollectionExtensions
 
       // Mappers
       .AddSingleton<IRepoObjectMapper, RepoObjectMapper>()
-
-      // Metrics
-      .AddRnMetricsBase(config)
 
       // Logging
       .AddLogging(loggingBuilder =>

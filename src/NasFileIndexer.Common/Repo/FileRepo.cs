@@ -1,6 +1,9 @@
+using System.Data;
+using Dapper;
+using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Queries;
-using Rn.NetCore.DbCommon;
 
 namespace NasFileIndexer.Common.Repo;
 
@@ -11,22 +14,52 @@ public interface IFileRepo
   Task<int> AddManyAsync(List<FileEntity> entries);
 }
 
-public class FileRepo : BaseRepo<FileRepo>, IFileRepo
+public class FileRepo : IFileRepo
 {
   private readonly IFileRepoQueries _queries;
+  private readonly MySqlConnection _connection;
 
-  public FileRepo(IBaseRepoHelper baseRepoHelper, IFileRepoQueries queries)
-    : base(baseRepoHelper)
+  public FileRepo(IFileRepoQueries queries, IConfiguration configuration)
   {
+    var connectionString = configuration.GetSection("ConnectionStrings:NasFileIndexer").Value ?? string.Empty;
+    _connection = new MySqlConnection(connectionString);
     _queries = queries;
   }
 
-  public Task<int> TruncateTableAsync() =>
-    ExecuteAsync(nameof(TruncateTableAsync), _queries.TruncateTable());
+  public Task<int> TruncateTableAsync()
+  {
+    EnsureConnected();
+    return _connection.ExecuteAsync(_queries.TruncateTable());
+  }
 
-  public Task<int> AddAsync(FileEntity fileEntity) =>
-    ExecuteAsync(nameof(AddAsync), _queries.Add(), fileEntity);
+  public Task<int> AddAsync(FileEntity fileEntity)
+  {
+    EnsureConnected();
 
-  public Task<int> AddManyAsync(List<FileEntity> entries) =>
-    ExecuteAsync(nameof(AddManyAsync), _queries.Add(), entries);
+    return _connection.ExecuteAsync(_queries.Add(), fileEntity);
+  }
+
+  public Task<int> AddManyAsync(List<FileEntity> entries)
+  {
+    EnsureConnected();
+    return _connection.ExecuteAsync(_queries.Add(), entries);
+  }
+
+  private void EnsureConnected()
+  {
+    switch (_connection.State)
+    {
+      case ConnectionState.Open:
+        return;
+      case ConnectionState.Closed:
+        _connection.Open();
+        break;
+    }
+
+    if (_connection.State != ConnectionState.Broken)
+      return;
+
+    _connection.Close();
+    _connection.Open();
+  }
 }
