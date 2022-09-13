@@ -1,7 +1,8 @@
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
 WORKDIR /app
 
-RUN apt-get update &&  apt-get install -y mediainfo
+# This is potentially optional
+# RUN apt-get update &&  apt-get install -y mediainfo
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src

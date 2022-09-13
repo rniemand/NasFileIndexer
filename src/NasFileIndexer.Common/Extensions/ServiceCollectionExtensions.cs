@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NasFileIndexer.Common.Mappers;
-using NasFileIndexer.Common.Providers;
+using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Queries;
 using NasFileIndexer.Common.Repo;
 using NasFileIndexer.Common.Services;
@@ -18,13 +18,13 @@ public static class ServiceCollectionExtensions
     return services
       // Configuration
       .AddSingleton(config)
+      .AddSingleton(GetNasFileIndexerConfig(config))
 
       // DB Stuff
       .AddSingleton<IFileRepoQueries, FileRepoQueries>()
       .AddSingleton<IFileRepo, FileRepo>()
 
       // Providers
-      .AddSingleton<IConfigProvider, ConfigProvider>()
       .AddTransient<IDirectoryScanner, DirectoryScanner>()
 
       // Services
@@ -51,4 +51,15 @@ public static class ServiceCollectionExtensions
       .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
       .AddJsonFile("NasFileIndexer.json", true, true)
       .Build();
+
+  private static NasFileIndexerConfig GetNasFileIndexerConfig(IConfiguration config)
+  {
+    var boundConfig = new NasFileIndexerConfig();
+    IConfigurationSection? section = config.GetSection("NasFileIndexer");
+
+    if (section.Exists())
+      section.Bind(boundConfig);
+    
+    return boundConfig;
+  }
 }
