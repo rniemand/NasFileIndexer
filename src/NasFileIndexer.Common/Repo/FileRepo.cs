@@ -59,7 +59,15 @@ public class FileRepo : IFileRepo
     if (_connection.State != ConnectionState.Broken)
       return;
 
-    _connection.Close();
+    try
+    {
+      _connection.Close();
+    }
+    catch (Exception)
+    {
+      // swallow
+    }
+    
     _connection.Open();
   }
 }
