@@ -12,10 +12,17 @@ public interface IRepoObjectMapper
 
 public class RepoObjectMapper : IRepoObjectMapper
 {
+  private readonly NasFileIndexerConfig _config;
+
+  public RepoObjectMapper(NasFileIndexerConfig config)
+  {
+    _config = config;
+  }
+
   public FileEntity MapFileEntry(FileInfo fileInfo)
   {
     var pathParts = ExtractPathParts(fileInfo.FullName);
-    
+
     return AppendMediaInfo(new FileEntity
     {
       CreationTimeUtc = fileInfo.CreationTimeUtc,
@@ -43,7 +50,7 @@ public class RepoObjectMapper : IRepoObjectMapper
 
   private FileEntity AppendMediaInfo(FileEntity file)
   {
-    if (!IsSupportedMediaFile(file))
+    if (!_config.AppendMediaInfo || !IsSupportedMediaFile(file))
       return file;
 
     var info = new MediaInfoWrapper(file.FilePath);
@@ -67,7 +74,7 @@ public class RepoObjectMapper : IRepoObjectMapper
     file.AudioStreamCount = info.AudioStreams.Count;
     file.SubtitleCount = info.Subtitles.Count;
     file.HasSubtitles = file.SubtitleCount > 0;
-    
+
     return file;
   }
 

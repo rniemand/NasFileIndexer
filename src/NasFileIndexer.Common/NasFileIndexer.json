@@ -18,6 +18,7 @@
     ],
     "MaxScanDepth": 15,
     "SkipPaths": [],
+    "AppendMediaInfo": true,
     "SkipPathExpressions": [
       ".*girl.*"
     ]
