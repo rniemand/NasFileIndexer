@@ -15,4 +15,7 @@ public class NasFileIndexerConfig
 
   [ConfigurationKeyName("SkipPathExpressions")]
   public string[] SkipPathExpressions { get; set; } = Array.Empty<string>();
+
+  [ConfigurationKeyName("AppendMediaInfo")]
+  public bool AppendMediaInfo { get; set; } = false;
 }
