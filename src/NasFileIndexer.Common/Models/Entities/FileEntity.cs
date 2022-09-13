@@ -23,9 +23,15 @@ public class FileEntity
   public string? PathSegment08 { get; set; }
   public string? PathSegment09 { get; set; }
   public string? PathSegment10 { get; set; }
-  public string? PathSegment11 { get; set; }
-  public string? PathSegment12 { get; set; }
-  public string? PathSegment13 { get; set; }
-  public string? PathSegment14 { get; set; }
-  public string? PathSegment15 { get; set; }
+  public string VideoResolution { get; set; } = string.Empty;
+  public bool IsVideoFile { get; set; }
+  public bool HasSubtitles { get; set; }
+  public double FrameRate { get; set; }
+  public int VideoWidth { get; set; }
+  public int VideoHeight { get; set; }
+  public int AudioStreamCount { get; set; }
+  public int VideoStreamCount { get; set; }
+  public int SubtitleCount { get; set; }
+  public string VideoDuration { get; set; } = string.Empty;
+  public double VideoDurationSec { get; set; }
 }

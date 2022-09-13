@@ -15,13 +15,15 @@ public class FileRepoQueries : IFileRepoQueries
 	  `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `Extension`, `FileName`,
       `PathSegment01`, `PathSegment02`, `PathSegment03`, `PathSegment04`, `PathSegment05`,
       `PathSegment06`, `PathSegment07`, `PathSegment08`, `PathSegment09`, `PathSegment10`,
-      `PathSegment11`, `PathSegment12`, `PathSegment13`, `PathSegment14`, `PathSegment15`,
-      `FileSize`, `FileSizeKb`, `FileSizeMb`, `FileSizeGb`, `FilePath`
+      `FileSize`, `FileSizeKb`, `FileSizeMb`, `FileSizeGb`, `FilePath`, `VideoResolution`,
+      `IsVideoFile`, `HasSubtitles`, `FrameRate`, `VideoWidth`, `VideoHeight`, `AudioStreamCount`,
+      `VideoStreamCount`, `SubtitleCount`, `VideoDuration`, `VideoDurationSec`
     ) VALUES (
 	  @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @Extension, @FileName,
       @PathSegment01, @PathSegment02, @PathSegment03, @PathSegment04, @PathSegment05,
       @PathSegment06, @PathSegment07, @PathSegment08, @PathSegment09, @PathSegment10,
-      @PathSegment11, @PathSegment12, @PathSegment13, @PathSegment14, @PathSegment15,
-      @FileSize, @FileSizeKb, @FileSizeMb, @FileSizeGb, @FilePath
+      @FileSize, @FileSizeKb, @FileSizeMb, @FileSizeGb, @FilePath, @VideoResolution,
+      @IsVideoFile, @HasSubtitles, @FrameRate, @VideoWidth, @VideoHeight, @AudioStreamCount,
+      @VideoStreamCount, @SubtitleCount, @VideoDuration, @VideoDurationSec
     );";
 }

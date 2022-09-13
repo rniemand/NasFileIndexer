@@ -1,5 +1,8 @@
+using MediaInfo;
 using NasFileIndexer.Common.Models;
 using Rn.NetCore.Common.Wrappers;
+using MediaInfo.Model;
+using Rn.NetCore.Common.Extensions;
 
 namespace NasFileIndexer.Common.Mappers;
 
@@ -13,8 +16,8 @@ public class RepoObjectMapper : IRepoObjectMapper
   public FileEntity MapFileEntry(IFileInfo fileInfo)
   {
     var pathParts = ExtractPathParts(fileInfo.FullName);
-
-    return new FileEntity
+    
+    return AppendMediaInfo(new FileEntity
     {
       CreationTimeUtc = fileInfo.CreationTimeUtc,
       Extension = fileInfo.Extension,
@@ -35,13 +38,38 @@ public class RepoObjectMapper : IRepoObjectMapper
       PathSegment07 = pathParts.Length >= 7 ? pathParts[6] : null,
       PathSegment08 = pathParts.Length >= 8 ? pathParts[7] : null,
       PathSegment09 = pathParts.Length >= 9 ? pathParts[8] : null,
-      PathSegment10 = pathParts.Length >= 10 ? pathParts[9] : null,
-      PathSegment11 = pathParts.Length >= 11 ? pathParts[10] : null,
-      PathSegment12 = pathParts.Length >= 12 ? pathParts[11] : null,
-      PathSegment13 = pathParts.Length >= 13 ? pathParts[12] : null,
-      PathSegment14 = pathParts.Length >= 14 ? pathParts[13] : null,
-      PathSegment15 = pathParts.Length >= 15 ? pathParts[14] : null
-    };
+      PathSegment10 = pathParts.Length >= 10 ? pathParts[9] : null
+    });
+  }
+
+  private FileEntity AppendMediaInfo(FileEntity file)
+  {
+    if (!IsSupportedMediaFile(file))
+      return file;
+
+    var info = new MediaInfoWrapper(file.FilePath);
+    file.VideoStreamCount = info.VideoStreams.Count;
+
+    if (file.VideoStreamCount > 0)
+    {
+      VideoStream mainVideoStream = info.VideoStreams
+        .OrderByDescending(x => x.Duration)
+        .First();
+
+      file.IsVideoFile = true;
+      file.FrameRate = mainVideoStream.FrameRate;
+      file.VideoWidth = mainVideoStream.Width;
+      file.VideoHeight = mainVideoStream.Height;
+      file.VideoDuration = mainVideoStream.Duration.ToString("g");
+      file.VideoDurationSec = mainVideoStream.Duration.TotalSeconds;
+      file.VideoResolution = mainVideoStream.Resolution;
+    }
+
+    file.AudioStreamCount = info.AudioStreams.Count;
+    file.SubtitleCount = info.Subtitles.Count;
+    file.HasSubtitles = file.SubtitleCount > 0;
+    
+    return file;
   }
 
   private static string[] ExtractPathParts(string filePath)
@@ -74,4 +102,7 @@ public class RepoObjectMapper : IRepoObjectMapper
 
   private static double GetFileSizeGb(IFileInfo fi) =>
     Math.Round(((double)fi.Length / 1073741824), 4);
+
+  private bool IsSupportedMediaFile(FileEntity file) =>
+    file.Extension.IgnoreCaseEquals(".mkv");
 }
