@@ -31,10 +31,13 @@ CREATE TABLE `Files` (
 	`SubtitleCount` TINYINT(4) NULL DEFAULT '0',
 	`VideoDuration` VARCHAR(32) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	`VideoDurationSec` DOUBLE NULL DEFAULT NULL,
+	`VideoFormat` VARCHAR(32) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
+	`VideoFormatVersion` VARCHAR(32) NULL DEFAULT NULL COLLATE 'utf8mb4_general_ci',
 	PRIMARY KEY (`FileId`) USING BTREE,
 	INDEX `Extension` (`Extension`) USING BTREE,
 	INDEX `IsVideoFile` (`IsVideoFile`) USING BTREE,
-	INDEX `HasSubtitles` (`HasSubtitles`) USING BTREE
+	INDEX `HasSubtitles` (`HasSubtitles`) USING BTREE,
+	INDEX `VideoFormat` (`VideoFormat`) USING BTREE
 )
 COLLATE='utf8mb4_general_ci'
 ENGINE=InnoDB
