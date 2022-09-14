@@ -7,9 +7,9 @@ namespace NasFileIndexer.Common.Repo;
 
 public interface IFileRepo
 {
-  int TruncateTable();
-  int Add(FileEntity fileEntity);
-  int AddMany(List<FileEntity> entries);
+  Task<int> TruncateTableAsync();
+  Task<int> AddAsync(FileEntity fileEntity);
+  Task<int> AddManyAsync(List<FileEntity> entries);
 }
 
 public class FileRepo : IFileRepo
@@ -23,21 +23,21 @@ public class FileRepo : IFileRepo
     _connectionFactory = connectionFactory;
   }
 
-  public int TruncateTable()
+  public Task<int> TruncateTableAsync()
   {
     using MySqlConnection connection = _connectionFactory.GetConnection();
-    return connection.Execute(_queries.TruncateTable());
+    return connection.ExecuteAsync(_queries.TruncateTable());
   }
 
-  public int Add(FileEntity fileEntity)
+  public Task<int> AddAsync(FileEntity fileEntity)
   {
     using MySqlConnection connection = _connectionFactory.GetConnection();
-    return connection.Execute(_queries.Add(), fileEntity);
+    return connection.ExecuteAsync(_queries.Add(), fileEntity);
   }
 
-  public int AddMany(List<FileEntity> entries)
+  public Task<int> AddManyAsync(List<FileEntity> entries)
   {
     using MySqlConnection connection = _connectionFactory.GetConnection();
-    return connection.Execute(_queries.Add(), entries);
+    return connection.ExecuteAsync(_queries.Add(), entries);
   }
 }
