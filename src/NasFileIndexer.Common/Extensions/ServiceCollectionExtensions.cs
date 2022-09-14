@@ -23,6 +23,7 @@ public static class ServiceCollectionExtensions
       // DB Stuff
       .AddSingleton<IFileRepoQueries, FileRepoQueries>()
       .AddSingleton<IFileRepo, FileRepo>()
+      .AddSingleton<IConnectionFactory, ConnectionFactory>()
 
       // Providers
       .AddTransient<IDirectoryScanner, DirectoryScanner>()

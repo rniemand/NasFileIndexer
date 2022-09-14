@@ -68,11 +68,9 @@ public class DirectoryScanner : IDirectoryScanner
 
       // Index top-level files
       var files = new List<FileEntity>();
-      files.AddRange(directory
-        .GetFiles()
-        .Select(_mapper.MapFileEntry));
-
-      SaveResults(files, stoppingToken);
+      files.AddRange(await _mapper.MapFileEntriesAsync(directory.GetFiles()));
+      
+      await SaveResultsAsync(files, stoppingToken);
     }
     catch (Exception ex)
     {
@@ -80,13 +78,13 @@ public class DirectoryScanner : IDirectoryScanner
     }
   }
 
-  private void SaveResults(List<FileEntity> files, CancellationToken stoppingToken)
+  private async Task SaveResultsAsync(List<FileEntity> files, CancellationToken stoppingToken)
   {
     if (stoppingToken.IsCancellationRequested || files.Count == 0)
       return;
 
     _logger.LogDebug("Saving {count} file(s) to the DB", files.Count);
-    _fileRepo.AddMany(files);
+    await _fileRepo.AddManyAsync(files);
   }
 
   private bool CanScanDirectory(string path, int depth, CancellationToken stoppingToken)

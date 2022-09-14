@@ -44,7 +44,7 @@ public class FileScannerService : IFileScannerService
       _config.ScanPaths.Length);
 
     // Ensure that we start with a clean "Files" DB table
-    _fileRepo.TruncateTable();
+    await _fileRepo.TruncateTableAsync();
 
     Parallel.ForEach(_config.ScanPaths, async path =>
       await ScanDirRecursive(path, stoppingToken));
