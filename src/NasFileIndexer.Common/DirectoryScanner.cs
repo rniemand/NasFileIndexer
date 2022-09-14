@@ -68,10 +68,8 @@ public class DirectoryScanner : IDirectoryScanner
 
       // Index top-level files
       var files = new List<FileEntity>();
-      files.AddRange(directory
-        .GetFiles()
-        .Select(_mapper.MapFileEntry));
-
+      files.AddRange(await _mapper.MapFileEntriesAsync(directory.GetFiles()));
+      
       await SaveResultsAsync(files, stoppingToken);
     }
     catch (Exception ex)
