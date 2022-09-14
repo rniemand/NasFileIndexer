@@ -74,6 +74,8 @@ public class RepoObjectMapper : IRepoObjectMapper
     file.AudioStreamCount = info.AudioStreams.Count;
     file.SubtitleCount = info.Subtitles.Count;
     file.HasSubtitles = file.SubtitleCount > 0;
+    file.VideoFormat = info.Format;
+    file.VideoFormatVersion = info.FormatVersion;
 
     return file;
   }
@@ -101,13 +103,13 @@ public class RepoObjectMapper : IRepoObjectMapper
   }
 
   private static double GetFileSizeKb(FileInfo fi) =>
-    Math.Round(((double)fi.Length / 1024), 4);
+    Math.Round(((double)fi.Length / 1024), 2);
 
   private static double GetFileSizeMb(FileInfo fi) =>
-    Math.Round(((double)fi.Length / 1048576), 4);
+    Math.Round(((double)fi.Length / 1048576), 2);
 
   private static double GetFileSizeGb(FileInfo fi) =>
-    Math.Round(((double)fi.Length / 1073741824), 4);
+    Math.Round(((double)fi.Length / 1073741824), 2);
 
   private static bool IsSupportedMediaFile(FileEntity file) =>
     file.Extension.IgnoreCaseEquals(".mkv");

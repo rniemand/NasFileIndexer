@@ -34,4 +34,6 @@ public class FileEntity
   public int SubtitleCount { get; set; }
   public string VideoDuration { get; set; } = string.Empty;
   public double VideoDurationSec { get; set; }
+  public string? VideoFormat { get; set; }
+  public string? VideoFormatVersion { get; set; }
 }
