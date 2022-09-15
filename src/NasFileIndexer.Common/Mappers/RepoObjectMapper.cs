@@ -8,7 +8,6 @@ namespace NasFileIndexer.Common.Mappers;
 public interface IRepoObjectMapper
 {
   FileEntity MapFileEntry(FileInfo fileInfo);
-  Task<List<FileEntity>> MapFileEntriesAsync(IReadOnlyCollection<FileInfo> fileInfos);
 }
 
 public class RepoObjectMapper : IRepoObjectMapper
@@ -49,23 +48,6 @@ public class RepoObjectMapper : IRepoObjectMapper
     });
   }
   
-  public async Task<List<FileEntity>> MapFileEntriesAsync(IReadOnlyCollection<FileInfo> fileInfos)
-  {
-    var mapped = new List<FileEntity>();
-
-    if (fileInfos.Count == 0)
-      return mapped;
-
-    await Task.WhenAll(fileInfos
-      .Select(fileInfo => Task.Run(() =>
-      {
-        mapped.Add(MapFileEntry(fileInfo));
-      }))
-      .ToArray());
-    
-    return mapped;
-  }
-
   private FileEntity AppendMediaInfo(FileEntity file)
   {
     if (!_config.AppendMediaInfo || !IsSupportedMediaFile(file))
