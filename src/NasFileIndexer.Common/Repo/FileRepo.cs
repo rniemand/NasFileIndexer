@@ -1,5 +1,4 @@
 using Dapper;
-using MySql.Data.MySqlClient;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Queries;
 
@@ -25,19 +24,19 @@ public class FileRepo : IFileRepo
 
   public Task<int> TruncateTableAsync()
   {
-    using MySqlConnection connection = _connectionFactory.GetConnection();
+    using var connection = _connectionFactory.GetConnection();
     return connection.ExecuteAsync(_queries.TruncateTable());
   }
 
   public Task<int> AddAsync(FileEntity fileEntity)
   {
-    using MySqlConnection connection = _connectionFactory.GetConnection();
+    using var connection = _connectionFactory.GetConnection();
     return connection.ExecuteAsync(_queries.Add(), fileEntity);
   }
 
   public Task<int> AddManyAsync(List<FileEntity> entries)
   {
-    using MySqlConnection connection = _connectionFactory.GetConnection();
+    using var connection = _connectionFactory.GetConnection();
     return connection.ExecuteAsync(_queries.Add(), entries);
   }
 }

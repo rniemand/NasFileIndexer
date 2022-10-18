@@ -56,7 +56,7 @@ public static class ServiceCollectionExtensions
   private static NasFileIndexerConfig GetNasFileIndexerConfig(IConfiguration config)
   {
     var boundConfig = new NasFileIndexerConfig();
-    IConfigurationSection? section = config.GetSection("NasFileIndexer");
+    var section = config.GetSection("NasFileIndexer");
 
     if (section.Exists())
       section.Bind(boundConfig);
