@@ -52,7 +52,7 @@ public class DirectoryScanner : IDirectoryScanner
 
     try
     {
-      _logger.LogInformation("Scanning directory depth {depth}: {path}", depth, path);
+      _logger.LogDebug("Scanning directory depth {depth}: {path}", depth, path);
       var directory = new DirectoryInfo(path);
 
       // Recurse index directories
@@ -98,7 +98,12 @@ public class DirectoryScanner : IDirectoryScanner
 
     // Check to see if we have hit the max folder depth
     if (depth > _config.MaxScanDepth)
+    {
+      _logger.LogInformation("Skipping DIR '{path}' (exceeds max scan depth of {depth})",
+        path, _config.MaxScanDepth);
+
       return false;
+    }
 
     // Check to see if we have any configured skip paths
     if (_config.SkipPaths.Length > 0)
