@@ -1,7 +1,7 @@
 using MediaInfo;
 using NasFileIndexer.Common.Models;
-using MediaInfo.Model;
 using NasFileIndexer.Common.Extensions;
+using RnCore.Logging;
 
 namespace NasFileIndexer.Common.Mappers;
 
@@ -13,10 +13,13 @@ public interface IRepoObjectMapper
 public class RepoObjectMapper : IRepoObjectMapper
 {
   private readonly NasFileIndexerConfig _config;
+  private readonly ILoggerAdapter<RepoObjectMapper> _logger;
 
-  public RepoObjectMapper(NasFileIndexerConfig config)
+  public RepoObjectMapper(NasFileIndexerConfig config,
+    ILoggerAdapter<RepoObjectMapper> logger)
   {
     _config = config;
+    _logger = logger;
   }
 
   public FileEntity MapFileEntry(FileInfo fileInfo)
@@ -53,29 +56,36 @@ public class RepoObjectMapper : IRepoObjectMapper
     if (!_config.AppendMediaInfo || !IsSupportedMediaFile(file))
       return file;
 
-    var info = new MediaInfoWrapper(file.FilePath);
-    file.VideoStreamCount = info.VideoStreams.Count;
-
-    if (file.VideoStreamCount > 0)
+    try
     {
-      VideoStream mainVideoStream = info.VideoStreams
-        .OrderByDescending(x => x.Duration)
-        .First();
+      var info = new MediaInfoWrapper(file.FilePath, _logger);
+      file.VideoStreamCount = info.VideoStreams.Count;
 
-      file.IsVideoFile = true;
-      file.FrameRate = mainVideoStream.FrameRate;
-      file.VideoWidth = mainVideoStream.Width;
-      file.VideoHeight = mainVideoStream.Height;
-      file.VideoDuration = mainVideoStream.Duration.ToString("g");
-      file.VideoDurationSec = mainVideoStream.Duration.TotalSeconds;
-      file.VideoResolution = mainVideoStream.Resolution;
+      if (file.VideoStreamCount > 0)
+      {
+        var mainVideoStream = info.VideoStreams
+          .OrderByDescending(x => x.Duration)
+          .First();
+
+        file.IsVideoFile = true;
+        file.FrameRate = mainVideoStream.FrameRate;
+        file.VideoWidth = mainVideoStream.Width;
+        file.VideoHeight = mainVideoStream.Height;
+        file.VideoDuration = mainVideoStream.Duration.ToString("g");
+        file.VideoDurationSec = mainVideoStream.Duration.TotalSeconds;
+        file.VideoResolution = mainVideoStream.Resolution;
+      }
+
+      file.AudioStreamCount = info.AudioStreams.Count;
+      file.SubtitleCount = info.Subtitles.Count;
+      file.HasSubtitles = file.SubtitleCount > 0;
+      file.VideoFormat = info.Format;
+      file.VideoFormatVersion = info.FormatVersion;
     }
-
-    file.AudioStreamCount = info.AudioStreams.Count;
-    file.SubtitleCount = info.Subtitles.Count;
-    file.HasSubtitles = file.SubtitleCount > 0;
-    file.VideoFormat = info.Format;
-    file.VideoFormatVersion = info.FormatVersion;
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Failed to enrich: {path}", file.FilePath);
+    }
 
     return file;
   }
