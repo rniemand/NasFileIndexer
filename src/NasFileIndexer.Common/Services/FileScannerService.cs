@@ -58,6 +58,8 @@ public class FileScannerService : IFileScannerService
   // Internal methods
   private async Task ScanDirRecursive(string path, CancellationToken stoppingToken)
   {
+    _logger.LogInformation("Scanning path: {path}", path);
+
     await _serviceProvider
       .GetRequiredService<IDirectoryScanner>()
       .Configure(_config)
