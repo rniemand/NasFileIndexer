@@ -1,7 +1,9 @@
 using MediaInfo;
+using Microsoft.Extensions.Logging.Abstractions;
 using NasFileIndexer.Common.Models;
 using NasFileIndexer.Common.Extensions;
 using RnCore.Logging;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace NasFileIndexer.Common.Mappers;
 
@@ -58,7 +60,9 @@ public class RepoObjectMapper : IRepoObjectMapper
 
     try
     {
-      var info = new MediaInfoWrapper(file.FilePath, _logger);
+      var info = new MediaInfoWrapper(file.FilePath,
+        _config.UseNullLogger ? NullLogger.Instance : _logger);
+
       file.VideoStreamCount = info.VideoStreams.Count;
 
       if (file.VideoStreamCount > 0)
