@@ -55,6 +55,11 @@ public class DirectoryScanner : IDirectoryScanner
       _logger.LogDebug("Scanning directory depth {depth}: {path}", depth, path);
       var directory = new DirectoryInfo(path);
 
+      _logger.LogDebug("Scanning: '{path}' (files: {fCount}) (dirs: {dCount})",
+        directory.FullName,
+        directory.GetFiles().Length,
+        directory.GetDirectories().Length);
+
       // Recurse index directories
       foreach (var subDirInfo in directory.GetDirectories())
         await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
