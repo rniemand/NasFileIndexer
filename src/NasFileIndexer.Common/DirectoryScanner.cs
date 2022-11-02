@@ -56,15 +56,8 @@ public class DirectoryScanner : IDirectoryScanner
       var directory = new DirectoryInfo(path);
 
       // Recurse index directories
-      var scanTasks = directory
-        .GetDirectories()
-        .Select(subDirInfo => ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken))
-        .ToList();
-
-      if (scanTasks.Count > 1)
-        _logger.LogTrace("Waiting on {count} tasks(s) to complete", scanTasks.Count);
-
-      await Task.WhenAll(scanTasks);
+      foreach (var subDirInfo in directory.GetDirectories())
+        await ScanDirRecursive(subDirInfo.FullName, depth + 1, stoppingToken);
 
       // Index top-level files
       var fileInfos = directory.GetFiles();
