@@ -60,9 +60,18 @@ public class FileScannerService : IFileScannerService
   {
     _logger.LogInformation("Scanning path: {path}", path);
 
-    await _serviceProvider
-      .GetRequiredService<IDirectoryScanner>()
-      .Configure(_config)
-      .ScanAsync(path, stoppingToken);
+    try
+    {
+      await _serviceProvider
+        .GetRequiredService<IDirectoryScanner>()
+        .Configure(_config)
+        .ScanAsync(path, stoppingToken);
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Error scanning path '{path}'. {exType}: {exMessage}",
+        path, ex.GetType().Name, ex.Message);
+      throw;
+    }
   }
 }
