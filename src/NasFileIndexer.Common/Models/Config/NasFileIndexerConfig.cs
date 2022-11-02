@@ -18,4 +18,7 @@ public class NasFileIndexerConfig
 
   [ConfigurationKeyName("AppendMediaInfo")]
   public bool AppendMediaInfo { get; set; } = false;
+
+  [ConfigurationKeyName("UseNullLogger")]
+  public bool UseNullLogger { get; set; } = true;
 }
