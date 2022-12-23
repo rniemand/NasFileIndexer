@@ -14,13 +14,14 @@
   },
   "NasFileIndexer": {
     "ScanPaths": [
-      "\\\\192.168.0.60\\Media\\Series\\Adult"
+      "\\\\192.168.0.60\\Media\\Series\\Adult\\Bates Motel"
     ],
     "MaxScanDepth": 15,
     "SkipPaths": [],
     "AppendMediaInfo": true,
     "SkipPathExpressions": [
       ".*girl.*"
-    ]
-  } 
+    ],
+    "UseNullLogger": true
+  }
 }
