@@ -117,7 +117,6 @@ public class DirectoryScanner : IDirectoryScanner
 
   private bool MatchesAnyExcludePattern(string path)
   {
-
     foreach (var expression in _config.SkipPathExpressions)
     {
       if (!Regex.IsMatch(path, expression, RegexOptions.IgnoreCase | RegexOptions.Singleline))
