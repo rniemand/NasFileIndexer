@@ -14,17 +14,17 @@ public interface IFileRepo
 public class FileRepo : IFileRepo
 {
   public const string TableName = "Files";
-  private readonly MySqlConnection _connection;
+  private readonly IConnectionFactory _connectionFactory;
 
   public FileRepo(IConnectionFactory connectionFactory)
   {
-    _connection = connectionFactory.GetConnection();
+    _connectionFactory = connectionFactory;
   }
 
   public Task<int> TruncateTableAsync()
   {
     const string query = $"TRUNCATE TABLE `{TableName}`;";
-    return _connection.ExecuteAsync(query);
+    return _connectionFactory.GetConnection().ExecuteAsync(query);
   }
 
   public Task<int> AddAsync(FileEntity fileEntity)
@@ -47,7 +47,7 @@ public class FileRepo : IFileRepo
       @VideoStreamCount, @SubtitleCount, @VideoDuration, @VideoDurationSec, @VideoFormat,
       @VideoFormatVersion
     );";
-    return _connection.ExecuteAsync(query, fileEntity);
+    return _connectionFactory.GetConnection().ExecuteAsync(query, fileEntity);
   }
 
   public Task<int> AddManyAsync(List<FileEntity> entries)
@@ -70,6 +70,6 @@ public class FileRepo : IFileRepo
       @VideoStreamCount, @SubtitleCount, @VideoDuration, @VideoDurationSec, @VideoFormat,
       @VideoFormatVersion
     );";
-    return _connection.ExecuteAsync(query, entries);
+    return _connectionFactory.GetConnection().ExecuteAsync(query, entries);
   }
 }
