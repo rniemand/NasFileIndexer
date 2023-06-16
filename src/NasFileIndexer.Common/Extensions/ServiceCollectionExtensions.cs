@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NasFileIndexer.Common.Mappers;
 using NasFileIndexer.Common.Models;
-using NasFileIndexer.Common.Queries;
 using NasFileIndexer.Common.Repo;
 using NasFileIndexer.Common.Services;
 using NLog.Extensions.Logging;
@@ -21,7 +20,6 @@ public static class ServiceCollectionExtensions
       .AddSingleton(GetNasFileIndexerConfig(config))
 
       // DB Stuff
-      .AddSingleton<IFileRepoQueries, FileRepoQueries>()
       .AddSingleton<IFileRepo, FileRepo>()
       .AddSingleton<IConnectionFactory, ConnectionFactory>()
 

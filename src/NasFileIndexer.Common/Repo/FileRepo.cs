@@ -1,6 +1,6 @@
 using Dapper;
+using MySqlConnector;
 using NasFileIndexer.Common.Models;
-using NasFileIndexer.Common.Queries;
 
 namespace NasFileIndexer.Common.Repo;
 
@@ -13,30 +13,63 @@ public interface IFileRepo
 
 public class FileRepo : IFileRepo
 {
-  private readonly IFileRepoQueries _queries;
-  private readonly IConnectionFactory _connectionFactory;
+  public const string TableName = "Files";
+  private readonly MySqlConnection _connection;
 
-  public FileRepo(IFileRepoQueries queries, IConnectionFactory connectionFactory)
+  public FileRepo(IConnectionFactory connectionFactory)
   {
-    _queries = queries;
-    _connectionFactory = connectionFactory;
+    _connection = connectionFactory.GetConnection();
   }
 
   public Task<int> TruncateTableAsync()
   {
-    using var connection = _connectionFactory.GetConnection();
-    return connection.ExecuteAsync(_queries.TruncateTable());
+    const string query = $"TRUNCATE TABLE `{TableName}`;";
+    return _connection.ExecuteAsync(query);
   }
 
   public Task<int> AddAsync(FileEntity fileEntity)
   {
-    using var connection = _connectionFactory.GetConnection();
-    return connection.ExecuteAsync(_queries.Add(), fileEntity);
+    const string query = $@"INSERT INTO `{TableName}`
+    (
+	  `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `Extension`, `FileName`,
+      `PathSegment01`, `PathSegment02`, `PathSegment03`, `PathSegment04`, `PathSegment05`,
+      `PathSegment06`, `PathSegment07`, `PathSegment08`, `PathSegment09`, `PathSegment10`,
+      `FileSize`, `FileSizeKb`, `FileSizeMb`, `FileSizeGb`, `FilePath`, `VideoResolution`,
+      `IsVideoFile`, `HasSubtitles`, `FrameRate`, `VideoWidth`, `VideoHeight`, `AudioStreamCount`,
+      `VideoStreamCount`, `SubtitleCount`, `VideoDuration`, `VideoDurationSec`, `VideoFormat`,
+      `VideoFormatVersion`
+    ) VALUES (
+	  @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @Extension, @FileName,
+      @PathSegment01, @PathSegment02, @PathSegment03, @PathSegment04, @PathSegment05,
+      @PathSegment06, @PathSegment07, @PathSegment08, @PathSegment09, @PathSegment10,
+      @FileSize, @FileSizeKb, @FileSizeMb, @FileSizeGb, @FilePath, @VideoResolution,
+      @IsVideoFile, @HasSubtitles, @FrameRate, @VideoWidth, @VideoHeight, @AudioStreamCount,
+      @VideoStreamCount, @SubtitleCount, @VideoDuration, @VideoDurationSec, @VideoFormat,
+      @VideoFormatVersion
+    );";
+    return _connection.ExecuteAsync(query, fileEntity);
   }
 
   public Task<int> AddManyAsync(List<FileEntity> entries)
   {
-    using var connection = _connectionFactory.GetConnection();
-    return connection.ExecuteAsync(_queries.Add(), entries);
+    const string query = $@"INSERT INTO `{TableName}`
+    (
+	  `CreationTimeUtc`, `LastAccessTimeUtc`, `LastWriteTimeUtc`, `Extension`, `FileName`,
+      `PathSegment01`, `PathSegment02`, `PathSegment03`, `PathSegment04`, `PathSegment05`,
+      `PathSegment06`, `PathSegment07`, `PathSegment08`, `PathSegment09`, `PathSegment10`,
+      `FileSize`, `FileSizeKb`, `FileSizeMb`, `FileSizeGb`, `FilePath`, `VideoResolution`,
+      `IsVideoFile`, `HasSubtitles`, `FrameRate`, `VideoWidth`, `VideoHeight`, `AudioStreamCount`,
+      `VideoStreamCount`, `SubtitleCount`, `VideoDuration`, `VideoDurationSec`, `VideoFormat`,
+      `VideoFormatVersion`
+    ) VALUES (
+	  @CreationTimeUtc, @LastAccessTimeUtc, @LastWriteTimeUtc, @Extension, @FileName,
+      @PathSegment01, @PathSegment02, @PathSegment03, @PathSegment04, @PathSegment05,
+      @PathSegment06, @PathSegment07, @PathSegment08, @PathSegment09, @PathSegment10,
+      @FileSize, @FileSizeKb, @FileSizeMb, @FileSizeGb, @FilePath, @VideoResolution,
+      @IsVideoFile, @HasSubtitles, @FrameRate, @VideoWidth, @VideoHeight, @AudioStreamCount,
+      @VideoStreamCount, @SubtitleCount, @VideoDuration, @VideoDurationSec, @VideoFormat,
+      @VideoFormatVersion
+    );";
+    return _connection.ExecuteAsync(query, entries);
   }
 }
